@@ -1,0 +1,4715 @@
+[
+  {
+    "model_key": "llama3-8b",
+    "hf_id": "mlx-community/Meta-Llama-3-8B-Instruct-4bit",
+    "n_layers": 32,
+    "d_model": 4096,
+    "heuristic_layer": 14,
+    "optimal_layer": 14,
+    "optimal_depth_fraction": 0.438,
+    "n_calibration_examples": 10,
+    "step": 2,
+    "scale": 1.0,
+    "elapsed_s": 1403.0,
+    "sweep": [
+      {
+        "layer": 8,
+        "depth_fraction": 0.25,
+        "avg_f1": 0.0865,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.08,
+            "em": false,
+            "generated": "Pope Nicholas II. He gave her this title in 1065. She was Ad",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.125,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a type of succ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both arenas are located on the campus ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "No, the Tundra Mine and Negus Mine were located in different",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "No. Kaiping is located in Guangdong Province, while Pingxian",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1818,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in Band-e-Amir ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1538,
+            "em": true,
+            "generated": "Long Island. Oak Beach, New York is a hamlet in the town of ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks. (Hardley Flood is a wetland area in the UK that suppo",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. | | | | | | | | | | | | | | | | | | | | | | | | ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 10,
+        "depth_fraction": 0.312,
+        "avg_f1": 0.0908,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.087,
+            "em": false,
+            "generated": "Pope Urban II. He gave her the title \"patricia\" of Rome in 1",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1176,
+            "em": true,
+            "generated": "Pueraria. Pueraria is a flowering plant, while Pleiospilos i",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville. Both are located on the campus of the University",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "No, they were not located in the same country. The Tundra Mi",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, they are not located in Guangdong Province. They are loc",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1379,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1333,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in which Afghan",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Long Island. Both Oak Beach and Great South Bay are located ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Duck. Hardley Flood is an area of lagoons that support popul",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. | | | | | | | | | | | | | | | | | | | | | | | | ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 12,
+        "depth_fraction": 0.375,
+        "avg_f1": 0.0843,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.0833,
+            "em": false,
+            "generated": "Pope Urban II. He gave her the title \"patricia\" of Rome in 1",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1176,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a genus of suc",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "No, the Tundra Mine and Negus Mine were located in different",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1176,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1379,
+            "em": true,
+            "generated": "The ingredients for She-crab soup are likely to come from th",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.16,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in which Afghan",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island. Oak Beach, New York and Great South Bay are bot",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Mallard. Hardley Flood is an area of lagoons that support po",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "depth_fraction": 0.438,
+        "avg_f1": 0.0959,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.087,
+            "em": false,
+            "generated": "Pope Nicholas II. He gave her the title \"patricia\" in 1065. ",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.125,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.0,
+            "em": false,
+            "generated": "The Chesapeake Bay, which is a brackish estuary in the Mid-A",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1905,
+            "em": false,
+            "generated": "Band-e-Amir National Park is named after the lakes in which ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1538,
+            "em": true,
+            "generated": "Long Island. Oak Beach, New York is located on the south sho",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "DUCK. Hardley Flood is an area of lagoons that support popul",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 16,
+        "depth_fraction": 0.5,
+        "avg_f1": 0.0879,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.08,
+            "em": false,
+            "generated": "Pope Urban II. He gave her the title \"patricia\" of Rome in 1",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in Sou",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1,
+            "em": true,
+            "generated": "No. Kaiping is located in Guangdong Province, while Pingxian",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1379,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in which Afghan",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island. Oak Beach is a hamlet in the town of Islip, New",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "ducks. Hardley Flood is an area of lagoons that support popu",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. |  |\n\nQuestion: What is the name of the suburb w",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 18,
+        "depth_fraction": 0.562,
+        "avg_f1": 0.0888,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.0909,
+            "em": false,
+            "generated": "Pope Nicholas II. He gave the title \"patricia\" of Rome to th",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in Sou",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1,
+            "em": true,
+            "generated": "No. Kaiping is located in Guangdong Province, but Pingxiang ",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1379,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1379,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in Band-e-Amir ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1379,
+            "em": true,
+            "generated": "Long Island. Oak Beach is a hamlet in the town of Islip, New",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "ducks. Hardley Flood is an area of lagoons that support popu",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 20,
+        "depth_fraction": 0.625,
+        "avg_f1": 0.0893,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.0909,
+            "em": false,
+            "generated": "Pope Urban II. He gave her the title \"patricia\" of Rome in 1",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in Sou",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1,
+            "em": true,
+            "generated": "No. Kaiping is located in Guangdong Province, while Pingxian",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1379,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1379,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in Band-e-Amir ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island. Oak Beach is a hamlet in the town of Islip, Suf",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "ducks. Hardley Flood is an area of lagoons that support popu",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 22,
+        "depth_fraction": 0.688,
+        "avg_f1": 0.0885,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.0769,
+            "em": false,
+            "generated": "Pope Nicholas II. He gave the title \"patricia\" of Rome to th",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in Sou",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1,
+            "em": true,
+            "generated": "No. Kaiping is located in Guangdong Province, while Pingxian",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1481,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in Band-e-Amir ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island. Oak Beach is a hamlet in the town of Islip, Suf",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "ducks. Hardley Flood is an area of lagoons that support popu",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 24,
+        "depth_fraction": 0.75,
+        "avg_f1": 0.091,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.0769,
+            "em": false,
+            "generated": "Pope Nicholas II. He gave the title \"patricia\" of Rome to th",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in Sou",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1176,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1481,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in Band-e-Amir ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.16,
+            "em": true,
+            "generated": "Long Island. Oak Beach, New York is a hamlet in the town of ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "ducks. Hardley Flood is an area of lagoons that support popu",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 26,
+        "depth_fraction": 0.812,
+        "avg_f1": 0.0887,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.0769,
+            "em": false,
+            "generated": "Pope Nicholas II. He gave the title \"patricia\" of Rome to th",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Pueraria is a flowering plant. Pleiospilos is a succulent pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky. Both are located on the campus of the ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in Sou",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1176,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1379,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in Band-e-Amir ",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island. Oak Beach is a hamlet in the town of Islip, Suf",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "ducks. Hardley Flood is an area of lagoons that support popu",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi. Tumbi Umbi is a suburb within the Central Coast ",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "model_key": "qwen25-7b",
+    "hf_id": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+    "n_layers": 28,
+    "d_model": 448,
+    "heuristic_layer": 15,
+    "optimal_layer": 17,
+    "optimal_depth_fraction": 0.607,
+    "n_calibration_examples": 10,
+    "step": 2,
+    "scale": 1.0,
+    "elapsed_s": 1243.9,
+    "sweep": [
+      {
+        "layer": 7,
+        "depth_fraction": 0.25,
+        "avg_f1": 0.1034,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons, supports populations of w",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 9,
+        "depth_fraction": 0.321,
+        "avg_f1": 0.1044,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Pleiospilos is a flowering plant genus. Pueraria is a genus ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons, supports populations of w",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 11,
+        "depth_fraction": 0.393,
+        "avg_f1": 0.1034,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons in the United Kingdom, sup",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 13,
+        "depth_fraction": 0.464,
+        "avg_f1": 0.1028,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1818,
+            "em": false,
+            "generated": "Band-e-Amir National Park is the correct answer. \n\nThe Band-",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Hardley Flood, an area of lagoons in the United Kingdom, sup",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 15,
+        "depth_fraction": 0.536,
+        "avg_f1": 0.1038,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.087,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons, supports populations of w",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 17,
+        "depth_fraction": 0.607,
+        "avg_f1": 0.1046,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Hardley Flood, an area of lagoons in the UK, supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 19,
+        "depth_fraction": 0.679,
+        "avg_f1": 0.1046,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons, supports populations of w",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 21,
+        "depth_fraction": 0.75,
+        "avg_f1": 0.1033,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1538,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons, supports populations of w",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 23,
+        "depth_fraction": 0.821,
+        "avg_f1": 0.1046,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1739,
+            "em": true,
+            "generated": "The title \"patricia\" of Rome was given to the mother of Albe",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "To determine which of the two given plant names, Pueraria or",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBoth Broadbent Arena and Freedom Hall ",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0,
+            "em": false,
+            "generated": "To determine if the Tundra Mine and Negus Mine were located ",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang, Guangxi are not both located in G",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "Atlantic Ocean\n\nThe She-crab soup is a traditional Maryland ",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.2,
+            "em": false,
+            "generated": "Band-e-Amir Dragons is named after the lakes in the Band-e-A",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Hardley Flood, an area of lagoons, supports populations of w",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0714,
+            "em": false,
+            "generated": "Tessa, of Microwave Jenny, grew up in the suburb of Somersby",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "model_key": "mistral-24b",
+    "hf_id": "mlx-community/Mistral-Small-24B-Instruct-2501-4bit",
+    "n_layers": 40,
+    "d_model": 640,
+    "heuristic_layer": 22,
+    "optimal_layer": 10,
+    "optimal_depth_fraction": 0.25,
+    "n_calibration_examples": 10,
+    "step": 2,
+    "scale": 1.0,
+    "elapsed_s": 4980.6,
+    "sweep": [
+      {
+        "layer": 10,
+        "depth_fraction": 0.25,
+        "avg_f1": 0.3122,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1818,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto (c. 912 \u2013 954) was a p",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Pueraria is a flowering plant, while Pleiospilos is a succul",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are i",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Long Island",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 12,
+        "depth_fraction": 0.3,
+        "avg_f1": 0.2234,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.2353,
+            "em": false,
+            "generated": "Pope John VIII\n\nPope John VIII (872-882) gave the mother of ",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1111,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "The Atlantic Ocean. She-crab soup is a traditional dish from",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Long Island",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "depth_fraction": 0.35,
+        "avg_f1": 0.3098,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.2353,
+            "em": false,
+            "generated": "Pope John VIII\n\nPope John VIII (872-882) gave the mother of ",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1111,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Long Island",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 16,
+        "depth_fraction": 0.4,
+        "avg_f1": 0.2017,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Pueraria is a flowering plant, while Pleiospilos is a succul",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.08,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.8,
+            "em": true,
+            "generated": "The Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a unique area of lagoons that suppor",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 18,
+        "depth_fraction": 0.45,
+        "avg_f1": 0.1948,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1111,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.8,
+            "em": true,
+            "generated": "The Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a series of lagoons and wetlands tha",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 20,
+        "depth_fraction": 0.5,
+        "avg_f1": 0.1759,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1111,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1818,
+            "em": false,
+            "generated": "Band-e-Amir National Park\n\nBand-e-Amir National Park is a pr",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a series of lagoons and wetlands tha",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 22,
+        "depth_fraction": 0.55,
+        "avg_f1": 0.1815,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1481,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.08,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1818,
+            "em": false,
+            "generated": "Band-e-Amir National Park\n\nBand-e-Amir National Park is a pr",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0769,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a unique area of lagoons that suppor",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 24,
+        "depth_fraction": 0.6,
+        "avg_f1": 0.2159,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1481,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.1111,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach, New York, and Great South Bay are bo",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a unique area of lagoons that suppor",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 26,
+        "depth_fraction": 0.65,
+        "avg_f1": 0.222,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.2353,
+            "em": false,
+            "generated": "Pope John VIII\n\nPope John VIII (872-882) gave the mother of ",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.08,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach and Great South Bay are both located ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a unique area of lagoons that suppor",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 28,
+        "depth_fraction": 0.7,
+        "avg_f1": 0.2139,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach and Great South Bay are both located ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a unique area of lagoons that suppor",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 30,
+        "depth_fraction": 0.75,
+        "avg_f1": 0.2308,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.2353,
+            "em": false,
+            "generated": "Pope John VIII\n\nPope John VIII (872-882) gave the mother of ",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach and Great South Bay are both located ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0769,
+            "em": true,
+            "generated": "Ducks\n\nHardley Flood is a unique area of lagoons that suppor",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 32,
+        "depth_fraction": 0.8,
+        "avg_f1": 0.2139,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach and Great South Bay are both located ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 34,
+        "depth_fraction": 0.85,
+        "avg_f1": 0.2139,
+        "avg_em": 0.6,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": false,
+            "generated": "Pope John VIII\n\nAlberic II of Spoleto was a significant figu",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Pueraria is a flowering plant. It is a genus of flowering pl",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.08,
+            "em": true,
+            "generated": "Louisville, Kentucky\n\nBroadbent Arena and Freedom Hall are b",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.1053,
+            "em": true,
+            "generated": "Yes, the Tundra Mine and Negus Mine were both located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0909,
+            "em": true,
+            "generated": "No, Kaiping and Pingxiang are not located in Guangdong Provi",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 1.0,
+            "em": true,
+            "generated": "Atlantic Ocean",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.5714,
+            "em": false,
+            "generated": "Band-e-Amir National Park",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "Long Island\n\nOak Beach and Great South Bay are both located ",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "Ducks",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tumbi Umbi",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "model_key": "deepseek-14b",
+    "hf_id": "mlx-community/DeepSeek-R1-Distill-Qwen-14B-4bit",
+    "n_layers": 48,
+    "d_model": 640,
+    "heuristic_layer": 26,
+    "optimal_layer": 12,
+    "optimal_depth_fraction": 0.25,
+    "n_calibration_examples": 10,
+    "step": 2,
+    "scale": 1.0,
+    "elapsed_s": 4094.4,
+    "sweep": [
+      {
+        "layer": 12,
+        "depth_fraction": 0.25,
+        "avg_f1": 0.0849,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1667,
+            "em": true,
+            "generated": "The She-crab soup likely comes from the Atlantic Ocean.\n\nOka",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "depth_fraction": 0.292,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 16,
+        "depth_fraction": 0.333,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 18,
+        "depth_fraction": 0.375,
+        "avg_f1": 0.0823,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.087,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 20,
+        "depth_fraction": 0.417,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 22,
+        "depth_fraction": 0.458,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 24,
+        "depth_fraction": 0.5,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 26,
+        "depth_fraction": 0.542,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 28,
+        "depth_fraction": 0.583,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 30,
+        "depth_fraction": 0.625,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 32,
+        "depth_fraction": 0.667,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 34,
+        "depth_fraction": 0.708,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 36,
+        "depth_fraction": 0.75,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 38,
+        "depth_fraction": 0.792,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      },
+      {
+        "layer": 40,
+        "depth_fraction": 0.833,
+        "avg_f1": 0.0831,
+        "avg_em": 0.7,
+        "n_examples": 10,
+        "per_example": [
+          {
+            "example_id": "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+            "f1": 0.1429,
+            "em": true,
+            "generated": "The title \"patricia\" was granted to the mother of Alberic II",
+            "gold": [
+              "Pope John X"
+            ]
+          },
+          {
+            "example_id": "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+            "f1": 0.0741,
+            "em": true,
+            "generated": "Pueraria\n\nOkay, so I need to figure out whether Pueraria or ",
+            "gold": [
+              "Pleiospilos"
+            ]
+          },
+          {
+            "example_id": "90caafc7fe51eee4143874971f67bb3e0107d26179c437f7",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Broadbent Arena and Freedom Hall are landmarks of which U.S.",
+            "gold": [
+              "Louisville"
+            ]
+          },
+          {
+            "example_id": "de85aaa5c535ba20bdcad5fbabfe13a03687374265a57b44",
+            "f1": 0.0833,
+            "em": true,
+            "generated": "Yes, both the Tundra Mine and Negus Mine were located in the",
+            "gold": [
+              "yes"
+            ]
+          },
+          {
+            "example_id": "5da42038bb9d29bb30e4094504ad06dc2d43afa373568686",
+            "f1": 0.0952,
+            "em": true,
+            "generated": "No. Kaiping and Pingxiang are both located in Guangxi, but t",
+            "gold": [
+              "no"
+            ]
+          },
+          {
+            "example_id": "c9f8b2166f7c44bf2e0843b2c77fb9fa5738af275555ca73",
+            "f1": 0.1481,
+            "em": true,
+            "generated": "The She-crab soup is a dish from the Lowcountry region of So",
+            "gold": [
+              "Atlantic Ocean"
+            ]
+          },
+          {
+            "example_id": "b6352c61b4a748448ce38882861cd5ae5f7f2869a81e92a1",
+            "f1": 0.1538,
+            "em": false,
+            "generated": "Band-e-Amir National Park.\n\nWait, that seems circular. Let m",
+            "gold": [
+              "Band-e Amir National Park"
+            ]
+          },
+          {
+            "example_id": "3a75aba6bc2496016339474aef28ffdc9dbebdc00ccc166b",
+            "f1": 0.1333,
+            "em": true,
+            "generated": "Long Island\n\nOkay, so I need to figure out the answer to the",
+            "gold": [
+              "Long Island"
+            ]
+          },
+          {
+            "example_id": "1fd7df3ba224e985f87e976c7a4a67ddc1012a249a542bea",
+            "f1": 0.0,
+            "em": true,
+            "generated": "The Hardley Flood is a group of lagoons that supports popula",
+            "gold": [
+              "duck"
+            ]
+          },
+          {
+            "example_id": "d7d92c85b8becc33e60fc03507933f8eaf53b5e1067286de",
+            "f1": 0.0,
+            "em": false,
+            "generated": "Tessa grew up in the suburb of **Tuggerah** within the Centr",
+            "gold": [
+              "Umina Beach, New South Wales"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

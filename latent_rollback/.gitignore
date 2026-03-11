@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Model cache / large files
+.benchmark_cache/
+*.pt
+*.safetensors
+
+# Results (can be large)
+benchmark_results/
+ablation_results/
+
+# Environment
+.env
+*.env
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.swp

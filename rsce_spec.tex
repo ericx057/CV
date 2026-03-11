@@ -1,0 +1,113 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% Notation shorthands
+\newcommand{\gen}{\mathrm{gen}}
+\newcommand{\geni}{\mathrm{gen}_{\mathrm{rsce}}}
+\newcommand{\qual}{\mathrm{qual}}
+\newcommand{\mpool}{\mathrm{mp}}
+\newcommand{\res}{\mathrm{res}}
+\newcommand{\ctx}{\mathrm{ctx}}
+
+\title{Residual Stream Context Encoding (RSCE): Formal Specification}
+\date{}
+
+\begin{document}
+\maketitle
+
+Let $M$ be a transformer model, $T$ a tokenizer, and $P$ a prompt string.
+
+\section*{Definitions}
+
+\textbf{Optimal injection layer.}
+\[
+    f(M) \;\rightarrow\; L \in \mathbb{Z}
+\]
+The optimal layer in $M$ at which to inject a latent context vector into the
+residual stream. Determined empirically per model architecture via accuracy
+sweep over a calibration set.
+
+\medskip
+\textbf{Residual context encoding.}
+\[
+    g(M, \ctx) \;\rightarrow\; C \in \mathbb{R}^{d_M}
+\]
+where $d_M$ is the hidden dimension of $M$. Specifically:
+\[
+    g(M, \ctx) \;=\; \mpool\!\left(\res_M\!\left(\ctx,\, f(M)\right)\right)
+\]
+the mean-pooled residual stream of $M$ at layer $f(M)$ over all token
+positions of $\ctx$. $C$ is the \emph{residual context encoding} — a
+fixed-size latent representation of $\ctx$ that is independent of
+$|\ctx|$.
+
+\medskip
+\textbf{Fact extraction.}
+\[
+    h(D) \;\rightarrow\; F \in \mathcal{V}^*
+\]
+Extracts a compact explicit token sequence $F$ (the fact block) from
+knowledge base $D$. $F$ handles hard factual anchoring cases where $C$
+alone is insufficiently precise due to lossy compression.
+
+\section*{Inference}
+
+\textbf{Baseline (standard token-level context):}
+\[
+    \gen\!\left(M,\; T(\ctx \oplus F \oplus P)\right)
+    \qquad
+    \text{input token count: } |T(\ctx)| + |T(F)| + |T(P)|
+\]
+
+\medskip
+\textbf{RSCE (residual stream context substitution):}
+\[
+    \geni\!\left(M,\; T(F \oplus P),\; C,\; f(M)\right)
+    \qquad
+    \text{input token count: } |T(F)| + |T(P)|
+\]
+where $\geni$ adds $C$ to the residual stream at layer $f(M)$ for all
+token positions during the forward pass, substituting token-level context
+with its latent encoding.
+
+\medskip
+\textbf{Token savings:}
+\[
+    \Delta \;=\; |T(\ctx)| \qquad \text{(strictly positive, } \Delta \gg 0 \text{ for long contexts)}
+\]
+
+\medskip
+\textbf{Computational complexity of context:}
+\[
+    \text{Baseline: } O(|T(\ctx)|) \qquad \text{RSCE: } O(1)
+\]
+The encoded context $C$ is a fixed-size vector regardless of $|\ctx|$,
+achieving $O(1)$ context cost at inference time.
+
+\section*{Conjecture}
+
+\[
+    \qual\!\left(\geni\!\left(M,\; T(F \oplus P),\; g(M, \ctx),\; f(M)\right)\right)
+    \;\approx\;
+    \qual\!\left(\gen\!\left(M,\; T(\ctx \oplus F \oplus P)\right)\right)
+\]
+
+Answer quality is preserved under substitution of $\ctx$ tokens with
+residual context encoding $C$, with explicit fact block $F$ absorbing
+the residual factual precision lost through compression, for $\Delta \gg 0$.
+
+\medskip
+\textbf{Generalization conjecture.} For any decoder transformer $M$ with
+hidden dimension $d_M$, there exists a layer $f(M)$ such that $g(M, \ctx)$
+encodes sufficient semantic information for downstream reasoning, and the
+above quality approximation holds up to a model-specific tolerance
+$\epsilon_M$:
+\[
+    \left|\, \qual\!\left(\geni(\cdots)\right) - \qual\!\left(\gen(\cdots)\right) \right| \leq \epsilon_M
+\]
+The existence of $f(M)$ for each $M$ is the central empirical claim of
+this work.
+
+\end{document}
