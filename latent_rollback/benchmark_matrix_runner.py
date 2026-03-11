@@ -25,9 +25,12 @@ Usage:
   source .venv/bin/activate
   python benchmark_matrix_runner.py --n 5 --max-tokens 60
   python benchmark_matrix_runner.py --models llama3-8b --n 10 --rank 4
-  python benchmark_matrix_runner.py --rank 4 8 16        # rank sweep
-  python benchmark_matrix_runner.py --fact-mode oracle   # upper bound F
-  python benchmark_matrix_runner.py --fact-mode both     # NER + oracle
+  python benchmark_matrix_runner.py --rank 4 8 16           # rank sweep
+  python benchmark_matrix_runner.py --fact-mode oracle      # upper bound F
+  python benchmark_matrix_runner.py --fact-mode both        # NER + oracle
+  python benchmark_matrix_runner.py --layer 14              # override injection layer
+  python benchmark_matrix_runner.py --conditions baseline vector   # run only specific conditions
+  python benchmark_matrix_runner.py --resume matrix_benchmark_123  # skip already-done examples
 """
 
 from __future__ import annotations
@@ -222,6 +225,9 @@ class MatrixBenchmarkRecord:
 # Per-example evaluation
 # ---------------------------------------------------------------------------
 
+ALL_CONDITIONS = ("baseline", "vector", "vector_f", "matrix", "matrix_f")
+
+
 def run_example(
     wrapper: MLXModelWrapper,
     example: BenchmarkExample,
@@ -232,10 +238,17 @@ def run_example(
     fact_mode: str = "ner",
     scale: float = 1.0,
     max_new_tokens: int = 80,
+    conditions: tuple[str, ...] = ALL_CONDITIONS,
     verbose: bool = False,
 ) -> MatrixBenchmarkRecord:
     full_prompt = example.full_prompt()
     question_prompt = example.question_prompt()
+
+    run_baseline  = "baseline"  in conditions
+    run_vector    = "vector"    in conditions
+    run_vector_f  = "vector_f"  in conditions
+    run_matrix    = "matrix"    in conditions
+    run_matrix_f  = "matrix_f"  in conditions
 
     # --- F block: h(D) ---
     if fact_mode == "oracle":
@@ -245,71 +258,94 @@ def run_example(
     f_prompt = f"{fact_block}\n{question_prompt}" if fact_block else question_prompt
 
     # --- Baseline: full context in prompt ---
-    t0 = time.time()
-    baseline_text, n_baseline_input = generate_baseline_qa(
-        wrapper, full_prompt, max_new_tokens
-    )
-    elapsed_baseline = time.time() - t0
-    n_baseline_output = len(wrapper.encode(baseline_text))
+    if run_baseline:
+        t0 = time.time()
+        baseline_text, n_baseline_input = generate_baseline_qa(
+            wrapper, full_prompt, max_new_tokens
+        )
+        elapsed_baseline = time.time() - t0
+        n_baseline_output = len(wrapper.encode(baseline_text))
+    else:
+        baseline_text, n_baseline_input, n_baseline_output, elapsed_baseline = "", 0, 0, 0.0
 
     # --- Vector [C + P]: mean-pool context -> fixed injection, no F ---
     from context_injector import extract_context_state
-    t0 = time.time()
-    context_vector, _ = extract_context_state(
-        wrapper, example.context, injection_layer, pool="mean"
-    )
-    vector_text, n_vector_input = generate_with_context_injection(
-        wrapper, question_prompt, context_vector,
-        layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
-    )
-    elapsed_vector = time.time() - t0
-    n_vector_output = len(wrapper.encode(vector_text))
+    if run_vector or run_vector_f:
+        context_vector, _ = extract_context_state(
+            wrapper, example.context, injection_layer, pool="mean"
+        )
+    else:
+        context_vector = None
+
+    if run_vector:
+        t0 = time.time()
+        vector_text, n_vector_input = generate_with_context_injection(
+            wrapper, question_prompt, context_vector,
+            layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
+        )
+        elapsed_vector = time.time() - t0
+        n_vector_output = len(wrapper.encode(vector_text))
+    else:
+        vector_text, n_vector_input, n_vector_output, elapsed_vector = "", 0, 0, 0.0
 
     # --- Vector+F [C + F + P]: same vector injection, F prepended to prompt ---
-    t0 = time.time()
-    vector_f_text, n_vector_f_input = generate_with_context_injection(
-        wrapper, f_prompt, context_vector,
-        layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
-    )
-    elapsed_vector_f = time.time() - t0
-    n_vector_f_output = len(wrapper.encode(vector_f_text))
+    if run_vector_f:
+        t0 = time.time()
+        vector_f_text, n_vector_f_input = generate_with_context_injection(
+            wrapper, f_prompt, context_vector,
+            layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
+        )
+        elapsed_vector_f = time.time() - t0
+        n_vector_f_output = len(wrapper.encode(vector_f_text))
+    else:
+        vector_f_text, n_vector_f_input, n_vector_f_output, elapsed_vector_f = "", 0, 0, 0.0
 
     # --- Matrix [M + P]: SVD context -> B @ (A @ v), no F ---
-    t0 = time.time()
-    A, B, S_r, _ = extract_context_matrix(
-        wrapper, example.context, injection_layer, rank=rank
-    )
-    question_ids = wrapper.encode(question_prompt)
-    matrix_ids = generate_with_matrix_hook(
-        wrapper,
-        token_ids=question_ids,
-        layer_matrices={injection_layer: (A, B)},
-        mode="inject",
-        scale=scale,
-        max_new_tokens=max_new_tokens,
-        broadcast=True,
-    )
-    matrix_text = _ids_to_str(wrapper, matrix_ids)
-    elapsed_matrix = time.time() - t0
-    n_matrix_input = len(question_ids)
-    n_matrix_output = len(matrix_ids)
+    if run_matrix or run_matrix_f:
+        A, B, S_r, _ = extract_context_matrix(
+            wrapper, example.context, injection_layer, rank=rank
+        )
+    else:
+        A, B, S_r = None, None, torch.zeros(rank)
+
+    if run_matrix:
+        t0 = time.time()
+        question_ids = wrapper.encode(question_prompt)
+        matrix_ids = generate_with_matrix_hook(
+            wrapper,
+            token_ids=question_ids,
+            layer_matrices={injection_layer: (A, B)},
+            mode="inject",
+            scale=scale,
+            max_new_tokens=max_new_tokens,
+            broadcast=True,
+        )
+        matrix_text = _ids_to_str(wrapper, matrix_ids)
+        elapsed_matrix = time.time() - t0
+        n_matrix_input = len(question_ids)
+        n_matrix_output = len(matrix_ids)
+    else:
+        matrix_text, n_matrix_input, n_matrix_output, elapsed_matrix = "", 0, 0, 0.0
 
     # --- Matrix+F [M + F + P]: same matrix injection, F prepended to prompt ---
-    t0 = time.time()
-    f_ids = wrapper.encode(f_prompt)
-    matrix_f_ids = generate_with_matrix_hook(
-        wrapper,
-        token_ids=f_ids,
-        layer_matrices={injection_layer: (A, B)},
-        mode="inject",
-        scale=scale,
-        max_new_tokens=max_new_tokens,
-        broadcast=True,
-    )
-    matrix_f_text = _ids_to_str(wrapper, matrix_f_ids)
-    elapsed_matrix_f = time.time() - t0
-    n_matrix_f_input = len(f_ids)
-    n_matrix_f_output = len(matrix_f_ids)
+    if run_matrix_f:
+        t0 = time.time()
+        f_ids = wrapper.encode(f_prompt)
+        matrix_f_ids = generate_with_matrix_hook(
+            wrapper,
+            token_ids=f_ids,
+            layer_matrices={injection_layer: (A, B)},
+            mode="inject",
+            scale=scale,
+            max_new_tokens=max_new_tokens,
+            broadcast=True,
+        )
+        matrix_f_text = _ids_to_str(wrapper, matrix_f_ids)
+        elapsed_matrix_f = time.time() - t0
+        n_matrix_f_input = len(f_ids)
+        n_matrix_f_output = len(matrix_f_ids)
+    else:
+        matrix_f_text, n_matrix_f_input, n_matrix_f_output, elapsed_matrix_f = "", 0, 0, 0.0
 
     # --- Grading ---
     baseline_grades  = grade_qa(baseline_text,  example.gold_answers)
@@ -426,13 +462,17 @@ def run_model(
     fact_mode: str = "ner",
     scale: float = 1.0,
     max_new_tokens: int = 80,
+    layer_override: int | None = None,
+    conditions: tuple[str, ...] = ALL_CONDITIONS,
+    done_ids: set[str] | None = None,
     verbose: bool = False,
 ) -> list[MatrixBenchmarkRecord]:
     hf_id = model_cfg["hf_id"]
     console.rule(f"[bold cyan]Model: {model_key}[/bold cyan]")
-    console.print(f"  HF ID     : {hf_id}")
-    console.print(f"  Rank      : {rank}")
-    console.print(f"  Fact mode : {fact_mode}")
+    console.print(f"  HF ID      : {hf_id}")
+    console.print(f"  Rank       : {rank}")
+    console.print(f"  Fact mode  : {fact_mode}")
+    console.print(f"  Conditions : {list(conditions)}")
 
     try:
         wrapper = load_model(hf_id)
@@ -440,14 +480,23 @@ def run_model(
         console.print(f"  [red]Failed to load {hf_id}: {exc}[/red]")
         return []
 
-    injection_layer = select_layer_heuristic(wrapper, hf_id)
-    console.print(f"  Injection layer: {injection_layer} / {wrapper.n_layers}")
+    if layer_override is not None:
+        injection_layer = layer_override
+        console.print(f"  Injection layer: {injection_layer} (override)")
+    else:
+        injection_layer = select_layer_heuristic(wrapper, hf_id)
+        console.print(f"  Injection layer: {injection_layer} / {wrapper.n_layers}")
 
     records: list[MatrixBenchmarkRecord] = []
+    skipped = 0
 
     modes = ["ner", "oracle"] if fact_mode == "both" else [fact_mode]
     for mode in modes:
         for i, ex in enumerate(examples):
+            run_key = f"{model_key}:{ex.id}:{mode}"
+            if done_ids and run_key in done_ids:
+                skipped += 1
+                continue
             console.print(
                 f"\n  [{i+1}/{len(examples)}] {ex.task}/{ex.id[:24]}  "
                 f"({ex.context_word_len}w ctx)  [dim]fact={mode}[/dim]"
@@ -462,11 +511,14 @@ def run_model(
                     fact_mode=mode,
                     scale=scale,
                     max_new_tokens=max_new_tokens,
+                    conditions=conditions,
                     verbose=verbose,
                 )
                 records.append(rec)
             except Exception as exc:
                 console.print(f"  [red]ERROR: {exc}[/red]")
+    if skipped:
+        console.print(f"  [dim]Skipped {skipped} already-done examples[/dim]")
 
     _print_model_summary(model_key, rank, records)
 
@@ -758,9 +810,36 @@ def main() -> int:
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--run-id", default=None, dest="run_id")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--layer", type=int, default=None,
+                        help="Override injection layer for all models (skips heuristic)")
+    parser.add_argument(
+        "--conditions", nargs="+", default=list(ALL_CONDITIONS),
+        choices=list(ALL_CONDITIONS),
+        help="Which conditions to run (default: all five)",
+    )
+    parser.add_argument(
+        "--resume", default=None, metavar="RUN_ID",
+        help="Resume a previous run: load its CSV and skip already-completed examples",
+    )
     args = parser.parse_args()
 
     run_id = args.run_id or f"matrix_benchmark_{int(time.time())}"
+
+    # Load already-done keys from a prior run
+    done_ids: set[str] = set()
+    if args.resume:
+        resume_path = RESULTS_DIR / f"{args.resume}.csv"
+        if not resume_path.exists():
+            resume_path = RESULTS_DIR / f"{args.resume}_partial.csv"
+        if resume_path.exists():
+            with open(resume_path) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    done_ids.add(f"{row['model_key']}:{row['example_id']}:{row['fact_mode']}")
+            console.print(f"  [dim]Resuming from {resume_path.name}: {len(done_ids)} examples already done[/dim]")
+            run_id = args.resume
+        else:
+            console.print(f"  [yellow]Resume file not found: {resume_path}[/yellow]")
 
     console.rule("[bold magenta]Matrix vs Vector Context Injection Benchmark[/bold magenta]")
     console.print(f"  Models    : {args.models}")
@@ -799,6 +878,9 @@ def main() -> int:
                 fact_mode=args.fact_mode,
                 scale=args.scale,
                 max_new_tokens=args.max_tokens,
+                layer_override=args.layer,
+                conditions=tuple(args.conditions),
+                done_ids=done_ids,
                 verbose=args.verbose,
             )
             all_records.extend(records)

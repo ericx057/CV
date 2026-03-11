@@ -18,8 +18,11 @@ Usage:
   source .venv/bin/activate
   python benchmark_ablation.py
   python benchmark_ablation.py --models llama3-8b --n 10 --fact-mode ner
-  python benchmark_ablation.py --fact-mode oracle   # upper bound experiment
-  python benchmark_ablation.py --fact-mode both     # run both (default)
+  python benchmark_ablation.py --fact-mode oracle        # upper bound experiment
+  python benchmark_ablation.py --fact-mode both          # run both (default)
+  python benchmark_ablation.py --layer 14                # override injection layer
+  python benchmark_ablation.py --condition rsce_f        # only run RSCE+F pass
+  python benchmark_ablation.py --resume ablation_123     # skip already-done examples
 """
 
 from __future__ import annotations
@@ -183,6 +186,9 @@ class AblationRecord:
 # Per-example evaluation
 # ---------------------------------------------------------------------------
 
+ALL_CONDITIONS = ("baseline", "rsce_only", "rsce_f")
+
+
 def run_example_ablation(
     wrapper: MLXModelWrapper,
     example: BenchmarkExample,
@@ -191,6 +197,7 @@ def run_example_ablation(
     fact_mode: str,
     scale: float = 1.0,
     max_new_tokens: int = 80,
+    conditions: tuple[str, ...] = ALL_CONDITIONS,
     verbose: bool = False,
 ) -> list[AblationRecord]:
     """
@@ -202,56 +209,71 @@ def run_example_ablation(
     modes = ["ner", "oracle"] if fact_mode == "both" else [fact_mode]
     records = []
 
-    # --- Condition 1: Baseline (run once, shared across modes) ---
-    baseline_text, n_baseline = generate_baseline_qa(
-        wrapper, example.full_prompt(), max_new_tokens
-    )
-    baseline_grades = grade_qa(baseline_text, example.gold_answers)
+    run_baseline  = "baseline"  in conditions
+    run_rsce_only = "rsce_only" in conditions
+    run_rsce_f    = "rsce_f"    in conditions
 
-    # --- Condition 2: RSCE only (run once, shared across modes) ---
-    ctx_v, _ = extract_context_state(wrapper, example.context, injection_layer)
-    rsce_only_text, n_rsce_only = generate_with_context_injection(
-        wrapper, example.question_prompt(), ctx_v,
-        layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
-    )
-    rsce_only_grades = grade_qa(rsce_only_text, example.gold_answers)
+    # --- Condition 1: Baseline ---
+    if run_baseline:
+        baseline_text, n_baseline = generate_baseline_qa(
+            wrapper, example.full_prompt(), max_new_tokens
+        )
+        baseline_grades = grade_qa(baseline_text, example.gold_answers)
+    else:
+        baseline_text, n_baseline = "", 0
+        baseline_grades = {"exact_match": False, "f1": 0.0}
 
-    token_metrics = compute_token_metrics(
-        n_baseline, n_rsce_only,
-        len(wrapper.encode(baseline_text)),
-        len(wrapper.encode(rsce_only_text)),
-    )
+    # --- Condition 2: RSCE only ---
+    if run_rsce_only or run_rsce_f:
+        ctx_v, _ = extract_context_state(wrapper, example.context, injection_layer)
+    else:
+        ctx_v = None
+
+    if run_rsce_only:
+        rsce_only_text, n_rsce_only = generate_with_context_injection(
+            wrapper, example.question_prompt(), ctx_v,
+            layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
+        )
+        rsce_only_grades = grade_qa(rsce_only_text, example.gold_answers)
+        token_metrics = compute_token_metrics(
+            n_baseline, n_rsce_only,
+            len(wrapper.encode(baseline_text)) if baseline_text else 0,
+            len(wrapper.encode(rsce_only_text)),
+        )
+    else:
+        rsce_only_text, n_rsce_only = "", 0
+        rsce_only_grades = {"exact_match": False, "f1": 0.0}
+        token_metrics = {"input_token_reduction": 0.0}
 
     if verbose:
-        console.print(f"    [dim]baseline:   {baseline_text.strip()[:80]}[/dim]")
-        console.print(f"    [dim]rsce-only:  {rsce_only_text.strip()[:80]}[/dim]")
+        if run_baseline:
+            console.print(f"    [dim]baseline:   {baseline_text.strip()[:80]}[/dim]")
+        if run_rsce_only:
+            console.print(f"    [dim]rsce-only:  {rsce_only_text.strip()[:80]}[/dim]")
         console.print(f"    [dim]gold:       {example.gold_answers}[/dim]")
 
     # --- Condition 3: RSCE + F (once per mode) ---
     for mode in modes:
-        if mode == "ner":
-            fact_block = extract_facts_ner(example.context)
-        else:
-            fact_block = extract_facts_oracle(example.context, example.gold_answers)
+        if run_rsce_f:
+            if mode == "ner":
+                fact_block = extract_facts_ner(example.context)
+            else:
+                fact_block = extract_facts_oracle(example.context, example.gold_answers)
 
-        if fact_block:
-            rsce_f_prompt = f"{fact_block}\n{example.question_prompt()}"
-        else:
-            rsce_f_prompt = example.question_prompt()
-
-        rsce_f_text, n_rsce_f = generate_with_context_injection(
-            wrapper, rsce_f_prompt, ctx_v,
-            layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
-        )
-        rsce_f_grades = grade_qa(rsce_f_text, example.gold_answers)
-
-        if verbose:
-            console.print(
-                f"    [dim]rsce+F ({mode}): {rsce_f_text.strip()[:80]}[/dim]"
+            rsce_f_prompt = f"{fact_block}\n{example.question_prompt()}" if fact_block else example.question_prompt()
+            rsce_f_text, n_rsce_f = generate_with_context_injection(
+                wrapper, rsce_f_prompt, ctx_v,
+                layer=injection_layer, scale=scale, max_new_tokens=max_new_tokens,
             )
-            console.print(
-                f"    [dim]fact block: {fact_block[:80]}[/dim]"
-            )
+            rsce_f_grades = grade_qa(rsce_f_text, example.gold_answers)
+
+            if verbose:
+                console.print(f"    [dim]rsce+F ({mode}): {rsce_f_text.strip()[:80]}[/dim]")
+                console.print(f"    [dim]fact block: {fact_block[:80]}[/dim]")
+        else:
+            fact_block = ""
+            rsce_f_text, n_rsce_f = "", 0
+            rsce_f_grades = {"exact_match": False, "f1": 0.0}
 
         records.append(AblationRecord(
             model_key=model_key,
@@ -293,12 +315,16 @@ def run_model_ablation(
     fact_mode: str = "both",
     scale: float = 1.0,
     max_new_tokens: int = 80,
+    layer_override: int | None = None,
+    conditions: tuple[str, ...] = ALL_CONDITIONS,
+    done_ids: set[str] | None = None,
     verbose: bool = False,
 ) -> list[AblationRecord]:
     hf_id = model_cfg["hf_id"]
     console.rule(f"[bold cyan]Ablation: {model_key}[/bold cyan]")
-    console.print(f"  HF ID     : {hf_id}")
-    console.print(f"  Fact mode : {fact_mode}")
+    console.print(f"  HF ID      : {hf_id}")
+    console.print(f"  Fact mode  : {fact_mode}")
+    console.print(f"  Conditions : {list(conditions)}")
 
     try:
         wrapper = load_model(hf_id)
@@ -306,12 +332,25 @@ def run_model_ablation(
         console.print(f"  [red]Load failed: {exc}[/red]")
         return []
 
-    injection_layer = select_layer_heuristic(wrapper, hf_id)
-    console.print(f"  Layer f(M): {injection_layer} / {wrapper.n_layers}")
+    if layer_override is not None:
+        injection_layer = layer_override
+        console.print(f"  Layer f(M): {injection_layer} (override)")
+    else:
+        injection_layer = select_layer_heuristic(wrapper, hf_id)
+        console.print(f"  Layer f(M): {injection_layer} / {wrapper.n_layers}")
 
     all_records: list[AblationRecord] = []
+    skipped = 0
 
+    modes = ["ner", "oracle"] if fact_mode == "both" else [fact_mode]
     for i, ex in enumerate(examples):
+        # Check if all modes for this example are already done
+        all_done = done_ids and all(
+            f"{model_key}:{ex.id}:{mode}" in done_ids for mode in modes
+        )
+        if all_done:
+            skipped += 1
+            continue
         console.print(
             f"\n  [{i+1}/{len(examples)}] {ex.task}/{ex.id[:24]} "
             f"({ex.context_word_len}w)"
@@ -324,11 +363,14 @@ def run_model_ablation(
                 fact_mode=fact_mode,
                 scale=scale,
                 max_new_tokens=max_new_tokens,
+                conditions=conditions,
                 verbose=verbose,
             )
             all_records.extend(recs)
         except Exception as exc:
             console.print(f"  [red]ERROR: {exc}[/red]")
+    if skipped:
+        console.print(f"  [dim]Skipped {skipped} already-done examples[/dim]")
 
     _print_model_ablation_summary(model_key, all_records)
 
@@ -491,9 +533,36 @@ def main() -> int:
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--run-id", default=None, dest="run_id")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--layer", type=int, default=None,
+                        help="Override injection layer for all models (skips heuristic)")
+    parser.add_argument(
+        "--condition", nargs="+", default=list(ALL_CONDITIONS),
+        choices=list(ALL_CONDITIONS), dest="conditions",
+        help="Which conditions to run (default: all three)",
+    )
+    parser.add_argument(
+        "--resume", default=None, metavar="RUN_ID",
+        help="Resume a previous run: load its CSV and skip already-completed examples",
+    )
     args = parser.parse_args()
 
     run_id = args.run_id or f"ablation_{int(time.time())}"
+
+    # Load already-done keys from a prior run
+    done_ids: set[str] = set()
+    if args.resume:
+        resume_path = RESULTS_DIR / f"{args.resume}.csv"
+        if not resume_path.exists():
+            resume_path = RESULTS_DIR / f"{args.resume}_partial.csv"
+        if resume_path.exists():
+            with open(resume_path) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    done_ids.add(f"{row['model_key']}:{row['example_id']}:{row['fact_mode']}")
+            console.print(f"  [dim]Resuming from {resume_path.name}: {len(done_ids)} examples already done[/dim]")
+            run_id = args.resume
+        else:
+            console.print(f"  [yellow]Resume file not found: {resume_path}[/yellow]")
 
     console.rule("[bold magenta]RSCE Ablation Benchmark — Part 2[/bold magenta]")
     console.print(f"  Models    : {args.models}")
@@ -524,6 +593,9 @@ def main() -> int:
             fact_mode=args.fact_mode,
             scale=args.scale,
             max_new_tokens=args.max_tokens,
+            layer_override=args.layer,
+            conditions=tuple(args.conditions),
+            done_ids=done_ids,
             verbose=args.verbose,
         )
         all_records.extend(recs)

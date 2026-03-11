@@ -31,8 +31,11 @@ Usage:
   python benchmark_runner.py
   python benchmark_runner.py --models llama3-8b qwen25-7b
   python benchmark_runner.py --tasks hotpotqa --n 5
-  python benchmark_runner.py --sweep-layer     # calibrate f(M) per model
-  python benchmark_runner.py --sweep-scale     # find optimal injection scale
+  python benchmark_runner.py --sweep-layer          # calibrate f(M) per model
+  python benchmark_runner.py --sweep-scale          # find optimal injection scale
+  python benchmark_runner.py --layer 14             # override injection layer directly
+  python benchmark_runner.py --condition injection  # skip baseline pass
+  python benchmark_runner.py --resume benchmark_1773255147  # skip already-done examples
 """
 
 from __future__ import annotations
@@ -156,31 +159,38 @@ def run_example(
     injection_scale: float = 1.0,
     pool: str = "mean",
     max_new_tokens: int = 80,
+    condition: str = "both",
     verbose: bool = False,
 ) -> BenchmarkRecord:
     full_prompt = example.full_prompt()
     question_prompt = example.question_prompt()
 
     # Baseline: context + question in prompt
-    t0 = time.time()
-    baseline_text, n_baseline_input = generate_baseline_qa(
-        wrapper, full_prompt, max_new_tokens
-    )
-    baseline_elapsed = time.time() - t0
-    n_baseline_output = len(wrapper.encode(baseline_text))
+    if condition in ("both", "baseline"):
+        t0 = time.time()
+        baseline_text, n_baseline_input = generate_baseline_qa(
+            wrapper, full_prompt, max_new_tokens
+        )
+        baseline_elapsed = time.time() - t0
+        n_baseline_output = len(wrapper.encode(baseline_text))
+    else:
+        baseline_text, n_baseline_input, n_baseline_output, baseline_elapsed = "", 0, 0, 0.0
 
     # Injection: extract context state, run question-only with injection
-    t0 = time.time()
-    context_vector, _ = extract_context_state(
-        wrapper, example.context, injection_layer, pool=pool
-    )
-    injection_text, n_injection_input = generate_with_context_injection(
-        wrapper, question_prompt, context_vector,
-        layer=injection_layer, scale=injection_scale,
-        max_new_tokens=max_new_tokens,
-    )
-    injection_elapsed = time.time() - t0
-    n_injection_output = len(wrapper.encode(injection_text))
+    if condition in ("both", "injection"):
+        t0 = time.time()
+        context_vector, _ = extract_context_state(
+            wrapper, example.context, injection_layer, pool=pool
+        )
+        injection_text, n_injection_input = generate_with_context_injection(
+            wrapper, question_prompt, context_vector,
+            layer=injection_layer, scale=injection_scale,
+            max_new_tokens=max_new_tokens,
+        )
+        injection_elapsed = time.time() - t0
+        n_injection_output = len(wrapper.encode(injection_text))
+    else:
+        injection_text, n_injection_input, n_injection_output, injection_elapsed = "", 0, 0, 0.0
 
     baseline_grades = grade_qa(baseline_text, example.gold_answers)
     injection_grades = grade_qa(injection_text, example.gold_answers)
@@ -239,6 +249,9 @@ def run_model(
     max_new_tokens: int = 80,
     sweep_layer: bool = False,
     sweep_scale: bool = False,
+    layer_override: int | None = None,
+    condition: str = "both",
+    done_ids: set[str] | None = None,
     verbose: bool = False,
 ) -> list[BenchmarkRecord]:
     hf_id = model_cfg["hf_id"]
@@ -254,7 +267,10 @@ def run_model(
         return []
 
     # Select injection layer via f(M)
-    if sweep_layer and examples:
+    if layer_override is not None:
+        injection_layer = layer_override
+        console.print(f"  Injection layer: {injection_layer} (override)")
+    elif sweep_layer and examples:
         ex = examples[0]
         best_layer, sweep_results = select_layer_sweep(
             wrapper, ex.context[:2000], ex.question
@@ -281,7 +297,12 @@ def run_model(
 
     # Run all examples
     records: list[BenchmarkRecord] = []
+    skipped = 0
     for i, ex in enumerate(examples):
+        run_key = f"{model_key}:{ex.id}"
+        if done_ids and run_key in done_ids:
+            skipped += 1
+            continue
         console.print(
             f"\n  [{i+1}/{len(examples)}] {ex.task}/{ex.id[:24]}  "
             f"({ex.context_word_len}w ctx)"
@@ -295,11 +316,14 @@ def run_model(
                 injection_scale=injection_scale,
                 pool=pool,
                 max_new_tokens=max_new_tokens,
+                condition=condition,
                 verbose=verbose,
             )
             records.append(rec)
         except Exception as exc:
             console.print(f"  [red]ERROR: {exc}[/red]")
+    if skipped:
+        console.print(f"  [dim]Skipped {skipped} already-done examples[/dim]")
 
     _print_model_summary(model_key, records)
 
@@ -436,9 +460,35 @@ def main() -> int:
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--run-id", default=None, dest="run_id")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--layer", type=int, default=None,
+                        help="Override injection layer for all models (skips heuristic/sweep)")
+    parser.add_argument(
+        "--condition", choices=["both", "baseline", "injection"], default="both",
+        help="Run only baseline pass, only injection pass, or both (default: both)",
+    )
+    parser.add_argument(
+        "--resume", default=None, metavar="RUN_ID",
+        help="Resume a previous run: load its CSV and skip already-completed examples",
+    )
     args = parser.parse_args()
 
     run_id = args.run_id or f"benchmark_{int(time.time())}"
+
+    # Load already-done example keys from a prior run
+    done_ids: set[str] = set()
+    if args.resume:
+        resume_path = RESULTS_DIR / f"{args.resume}.csv"
+        if not resume_path.exists():
+            resume_path = RESULTS_DIR / f"{args.resume}_partial.csv"
+        if resume_path.exists():
+            with open(resume_path) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    done_ids.add(f"{row['model_key']}:{row['example_id']}")
+            console.print(f"  [dim]Resuming from {resume_path.name}: {len(done_ids)} examples already done[/dim]")
+            run_id = args.resume  # append to same run file
+        else:
+            console.print(f"  [yellow]Resume file not found: {resume_path}[/yellow]")
 
     console.rule("[bold magenta]Latent Rollback Cross-Model Benchmark[/bold magenta]")
     console.print(f"  Models : {args.models}")
@@ -467,6 +517,9 @@ def main() -> int:
             max_new_tokens=args.max_tokens,
             sweep_layer=args.sweep_layer,
             sweep_scale=args.sweep_scale,
+            layer_override=args.layer,
+            condition=args.condition,
+            done_ids=done_ids,
             verbose=args.verbose,
         )
         all_records.extend(records)
