@@ -35,6 +35,27 @@ console = Console()
 
 _EPSILON = 1e-8
 
+# Stop strings for QA generation: truncate at the first paragraph break or
+# when the model starts generating a new question/fact-block prefix.
+QA_STOP_STRINGS: tuple[str, ...] = ("\n", "\nQuestion:", "\nFacts:", "\nContext:")
+
+
+def truncate_at_stop(text: str, stop_strings: tuple[str, ...] = QA_STOP_STRINGS) -> str:
+    """
+    Truncate `text` at the first occurrence of any stop string.
+
+    Used to prevent the model from generating beyond the answer boundary
+    (e.g. regenerating the fact block or the next question in a QA prompt).
+    Applied consistently to ALL conditions (baseline, vector, matrix) so
+    scores are comparable.
+    """
+    best = len(text)
+    for s in stop_strings:
+        idx = text.find(s)
+        if idx != -1 and idx < best:
+            best = idx
+    return text[:best]
+
 
 # ---------------------------------------------------------------------------
 # Context state extraction
@@ -106,6 +127,7 @@ def generate_with_context_injection(
     scale: float = 1.0,
     max_new_tokens: int = 100,
     normalize: bool = True,
+    stop_strings: tuple[str, ...] = QA_STOP_STRINGS,
 ) -> tuple[str, int]:
     """
     Generate a response to question_text with context_vector injected at `layer`.
@@ -156,6 +178,8 @@ def generate_with_context_injection(
             break
 
     text = _ids_to_str(wrapper, generated)
+    if stop_strings:
+        text = truncate_at_stop(text, stop_strings)
     return text, n_question_tokens
 
 
@@ -167,6 +191,7 @@ def generate_baseline_qa(
     wrapper: MLXModelWrapper,
     full_prompt: str,
     max_new_tokens: int = 100,
+    stop_strings: tuple[str, ...] = QA_STOP_STRINGS,
 ) -> tuple[str, int]:
     """
     Standard generation with full context in the prompt.
@@ -181,6 +206,8 @@ def generate_baseline_qa(
     n_input_tokens = len(token_ids)
     generated_ids = generate_baseline(wrapper, token_ids, max_new_tokens)
     text = _ids_to_str(wrapper, generated_ids)
+    if stop_strings:
+        text = truncate_at_stop(text, stop_strings)
     return text, n_input_tokens
 
 

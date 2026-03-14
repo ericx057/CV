@@ -56,9 +56,11 @@ from context_injector import (
     generate_baseline_qa,
     generate_with_context_injection,
     compute_token_metrics,
+    truncate_at_stop,
+    QA_STOP_STRINGS,
 )
 from layer_selector import select_layer_heuristic
-from benchmark_ablation import extract_facts_ner, extract_facts_oracle
+from benchmark_ablation import extract_facts_ner, extract_facts_bm25, extract_facts_oracle
 
 console = Console()
 RESULTS_DIR = Path(__file__).parent / "benchmark_results"
@@ -96,19 +98,25 @@ def extract_context_matrix(
     context_text: str,
     layer: int,
     rank: int,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, int]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, int]:
     """
     Extract a low-rank (A, B) matrix pair from context hidden states at `layer`.
 
     H [seq_len, d_model] -> SVD -> U [seq_len, r], S [r], Vh [r, d_model]
     A = Vh[:r, :]           [r, d_model]  -- context subspace directions
-    B = H.T @ U[:, :r]      [d_model, r]  -- lifting map
+    B = Vh[:r, :].T         [d_model, r]  -- unit-normed lifting map
 
-    Correction at inference: correction(v) = B @ (A @ v)
+    Correction at inference: correction(v) = B @ (A @ v) = Vh_r.T @ (Vh_r @ v)
+    This is an orthogonal projection of v onto the top-r context subspace.
+    ||correction(v)|| <= ||v||, so scale=1.0 is safe (matches vector injection).
+
+    Note: the original B = H.T @ U_r = Vh_r.T @ diag(S_r), whose columns are
+    scaled by singular values (thousands for long contexts), causing the residual
+    stream to be overwritten entirely. Normalizing to B = Vh_r.T fixes this.
 
     Returns
     -------
-    (A, B, singular_values, n_context_tokens)
+    (A, B, S_r, S_full, n_context_tokens)
     """
     token_ids = wrapper.encode(context_text)
     n_tokens = len(token_ids)
@@ -131,14 +139,13 @@ def extract_context_matrix(
     # S: [min(seq_len, d_model)]
     # Vh: [min(seq_len, d_model), d_model]
 
-    U_r = U[:, :effective_rank]    # [seq_len, r]
     S_r = S[:effective_rank]       # [r]
     Vh_r = Vh[:effective_rank, :]  # [r, d_model]
 
     A = Vh_r                       # [r, d_model]
-    B = H.T @ U_r                  # [d_model, r]
+    B = Vh_r.T                     # [d_model, r]  -- normalized (was H.T @ U_r)
 
-    return A, B, S_r, n_tokens
+    return A, B, S_r, S, n_tokens
 
 
 # ---------------------------------------------------------------------------
@@ -253,6 +260,8 @@ def run_example(
     # --- F block: h(D) ---
     if fact_mode == "oracle":
         fact_block = extract_facts_oracle(example.context, example.gold_answers)
+    elif fact_mode == "bm25":
+        fact_block = extract_facts_bm25(example.context, example.question)
     else:
         fact_block = extract_facts_ner(example.context)
     f_prompt = f"{fact_block}\n{question_prompt}" if fact_block else question_prompt
@@ -302,11 +311,11 @@ def run_example(
 
     # --- Matrix [M + P]: SVD context -> B @ (A @ v), no F ---
     if run_matrix or run_matrix_f:
-        A, B, S_r, _ = extract_context_matrix(
+        A, B, S_r, S_full, _ = extract_context_matrix(
             wrapper, example.context, injection_layer, rank=rank
         )
     else:
-        A, B, S_r = None, None, torch.zeros(rank)
+        A, B, S_r, S_full = None, None, torch.zeros(rank), torch.zeros(rank)
 
     if run_matrix:
         t0 = time.time()
@@ -320,7 +329,7 @@ def run_example(
             max_new_tokens=max_new_tokens,
             broadcast=True,
         )
-        matrix_text = _ids_to_str(wrapper, matrix_ids)
+        matrix_text = truncate_at_stop(_ids_to_str(wrapper, matrix_ids))
         elapsed_matrix = time.time() - t0
         n_matrix_input = len(question_ids)
         n_matrix_output = len(matrix_ids)
@@ -340,7 +349,7 @@ def run_example(
             max_new_tokens=max_new_tokens,
             broadcast=True,
         )
-        matrix_f_text = _ids_to_str(wrapper, matrix_f_ids)
+        matrix_f_text = truncate_at_stop(_ids_to_str(wrapper, matrix_f_ids))
         elapsed_matrix_f = time.time() - t0
         n_matrix_f_input = len(f_ids)
         n_matrix_f_output = len(matrix_f_ids)
@@ -359,7 +368,7 @@ def run_example(
     mx_m     = compute_token_metrics(n_baseline_input, n_matrix_input,   n_baseline_output, n_matrix_output)
     mx_f_m   = compute_token_metrics(n_baseline_input, n_matrix_f_input, n_baseline_output, n_matrix_f_output)
 
-    sv_energy_frac = float(S_r.sum() / (S_r.sum() + 1e-8))
+    sv_energy_frac = float(S_r.sum() / (S_full.sum() + 1e-8))
 
     if verbose:
         console.print(f"    fact block: {fact_block[:80]}")

@@ -32,7 +32,7 @@ from rich.console import Console
 console = Console()
 
 LONGBENCH_REPO = "THUDM/LongBench"
-SUPPORTED_TASKS = ("hotpotqa", "2wikimqa")
+SUPPORTED_TASKS = ("hotpotqa", "2wikimqa", "code_qa")
 CACHE_DIR = Path(__file__).parent / ".benchmark_cache"
 
 
@@ -244,8 +244,342 @@ def _hardcoded_fallback(task: str) -> list[BenchmarkExample]:
 
 
 # ---------------------------------------------------------------------------
+# Code QA benchmark (synthetic)
+# ---------------------------------------------------------------------------
+
+_CODE_EXAMPLES: list[dict] = [
+    {
+        "id": "code_qa_0",
+        "question": "What does find_by_id return?",
+        "gold_answers": ["Optional[User]"],
+        "context": """
+from typing import Optional
+from dataclasses import dataclass
+
+@dataclass
+class User:
+    id: int
+    name: str
+    email: str
+
+@dataclass
+class UserDelta:
+    name: str
+    email: str
+
+class UserRepository:
+    def find_by_id(self, user_id: int) -> Optional[User]:
+        ...
+
+    def update_user(self, user_id: int, delta: UserDelta) -> bool:
+        ...
+
+    def delete_user(self, user_id: int) -> bool:
+        ...
+
+def create_user(name: str, email: str) -> User:
+    ...
+
+MAX_USERS = 1000
+""",
+    },
+    {
+        "id": "code_qa_1",
+        "question": "What parameter type does update_user take as delta?",
+        "gold_answers": ["UserDelta"],
+        "context": """
+from typing import Optional
+from dataclasses import dataclass
+
+@dataclass
+class UserDelta:
+    name: str
+    email: str
+
+@dataclass
+class User:
+    id: int
+    name: str
+    email: str
+
+class UserRepository:
+    def find_by_id(self, user_id: int) -> Optional[User]:
+        ...
+
+    def update_user(self, user_id: int, delta: UserDelta) -> bool:
+        ...
+""",
+    },
+    {
+        "id": "code_qa_2",
+        "question": "What is the value of MAX_RETRIES?",
+        "gold_answers": ["3"],
+        "context": """
+import time
+from typing import Callable
+
+MAX_RETRIES = 3
+DEFAULT_TIMEOUT = 30
+BASE_URL = "https://api.example.com"
+
+def retry(fn: Callable, retries: int = MAX_RETRIES) -> bool:
+    for _ in range(retries):
+        try:
+            fn()
+            return True
+        except Exception:
+            time.sleep(1)
+    return False
+
+def fetch(url: str, timeout: int = DEFAULT_TIMEOUT) -> dict:
+    ...
+""",
+    },
+    {
+        "id": "code_qa_3",
+        "question": "What does create_user return?",
+        "gold_answers": ["User", "dict"],
+        "context": """
+from dataclasses import dataclass
+
+@dataclass
+class User:
+    id: int
+    name: str
+    email: str
+
+def create_user(name: str, email: str) -> User:
+    return User(id=0, name=name, email=email)
+
+def delete_user(user_id: int) -> bool:
+    ...
+
+def list_users() -> list[User]:
+    ...
+""",
+    },
+    {
+        "id": "code_qa_4",
+        "question": "What is imported from typing?",
+        "gold_answers": ["Optional", "Optional, List"],
+        "context": """
+from typing import Optional, List
+from dataclasses import dataclass
+
+@dataclass
+class Post:
+    id: int
+    title: str
+    body: str
+    author_id: int
+
+class PostRepository:
+    def find_by_author(self, author_id: int) -> List[Post]:
+        ...
+
+    def find_by_id(self, post_id: int) -> Optional[Post]:
+        ...
+
+    def create_post(self, title: str, body: str, author_id: int) -> Post:
+        ...
+""",
+    },
+    {
+        "id": "code_qa_5",
+        "question": "What argument does patch_user_email take as repo?",
+        "gold_answers": ["UserRepository"],
+        "context": """
+from typing import Optional
+from repository import UserRepository
+from types_module import UserDelta, User
+
+def patch_user_email(repo: UserRepository, user_id: int, new_email: str) -> bool:
+    delta = UserDelta(name=None, email=new_email)
+    return repo.update_user(user_id, delta)
+
+def patch_user_name(repo: UserRepository, user_id: int, new_name: str) -> bool:
+    delta = UserDelta(name=new_name, email=None)
+    return repo.update_user(user_id, delta)
+
+def deactivate_user(repo: UserRepository, user_id: int) -> bool:
+    ...
+""",
+    },
+    {
+        "id": "code_qa_6",
+        "question": "What does list_users return?",
+        "gold_answers": ["list[User]"],
+        "context": """
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class User:
+    id: int
+    name: str
+    active: bool = True
+
+class UserService:
+    def get_user(self, user_id: int) -> Optional[User]:
+        ...
+
+    def list_users(self) -> list[User]:
+        ...
+
+    def deactivate(self, user_id: int) -> bool:
+        ...
+
+    def count_active(self) -> int:
+        ...
+""",
+    },
+    {
+        "id": "code_qa_7",
+        "question": "What class does UserRepository extend?",
+        "gold_answers": ["Repository"],
+        "context": """
+from base import Repository
+from typing import Optional
+
+class User:
+    id: int
+    name: str
+
+class UserRepository(Repository):
+    def find_by_id(self, user_id: int) -> Optional[User]:
+        ...
+
+    def save(self, user: User) -> bool:
+        ...
+
+class PostRepository(Repository):
+    def find_recent(self, limit: int) -> list:
+        ...
+""",
+    },
+    {
+        "id": "code_qa_8",
+        "question": "What does the fetch function return?",
+        "gold_answers": ["dict"],
+        "context": """
+import json
+import urllib.request
+from typing import Optional
+
+DEFAULT_TIMEOUT = 30
+
+def fetch(url: str, timeout: int = DEFAULT_TIMEOUT) -> dict:
+    with urllib.request.urlopen(url, timeout=timeout) as resp:
+        return json.loads(resp.read())
+
+def fetch_optional(url: str) -> Optional[dict]:
+    try:
+        return fetch(url)
+    except Exception:
+        return None
+
+def post(url: str, body: dict) -> dict:
+    ...
+""",
+    },
+    {
+        "id": "code_qa_9",
+        "question": "What does count_active return?",
+        "gold_answers": ["int"],
+        "context": """
+from dataclasses import dataclass
+
+@dataclass
+class User:
+    id: int
+    name: str
+    active: bool
+
+def count_active(users: list[User]) -> int:
+    return sum(1 for u in users if u.active)
+
+def count_inactive(users: list[User]) -> int:
+    return sum(1 for u in users if not u.active)
+
+def filter_active(users: list[User]) -> list[User]:
+    return [u for u in users if u.active]
+""",
+    },
+]
+
+
+def load_code_benchmark(
+    n: int = len(_CODE_EXAMPLES),
+    seed: int = 42,
+) -> list[BenchmarkExample]:
+    """
+    Return synthetic code QA examples for benchmarking the code-specific F block.
+
+    Questions are answerable from function signatures, return types, parameter
+    types, imports, and constants — the exact content a code F block would carry.
+    """
+    import random
+    rng = random.Random(seed)
+    pool = list(_CODE_EXAMPLES)
+    rng.shuffle(pool)
+    selected = pool[:min(n, len(pool))]
+
+    return [
+        BenchmarkExample(
+            id=ex["id"],
+            task="code_qa",
+            context=ex["context"].strip(),
+            question=ex["question"],
+            gold_answers=ex["gold_answers"],
+            context_word_len=len(ex["context"].split()),
+            question_word_len=len(ex["question"].split()),
+        )
+        for ex in selected
+    ]
+
+
+# ---------------------------------------------------------------------------
 # QA grading
 # ---------------------------------------------------------------------------
+
+def grade_code_qa(generated_text: str, gold_answers: list[str]) -> dict:
+    """
+    Grade generated text against gold answers for code QA.
+
+    Case-sensitive unlike grade_qa — code identifiers are case-sensitive.
+    Otherwise identical scoring: exact containment + token F1.
+    """
+    import re
+    gen_norm = generated_text.strip()
+    gen_tokens = set(re.findall(r'[a-zA-Z_]\w*|\d+', gen_norm))
+
+    best_f1 = 0.0
+    best_answer = ""
+    exact = False
+
+    for gold in gold_answers:
+        gold_norm = gold.strip()
+        if gold_norm in gen_norm:
+            exact = True
+
+        gold_tokens = set(re.findall(r'[a-zA-Z_]\w*|\d+', gold_norm))
+        if not gold_tokens or not gen_tokens:
+            f1 = 0.0
+        else:
+            precision = len(gen_tokens & gold_tokens) / len(gen_tokens)
+            recall = len(gen_tokens & gold_tokens) / len(gold_tokens)
+            f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0.0
+
+        if f1 > best_f1:
+            best_f1 = f1
+            best_answer = gold
+
+    return {
+        "exact_match": exact,
+        "f1": round(best_f1, 4),
+        "best_answer": best_answer,
+    }
+
 
 def grade_qa(generated_text: str, gold_answers: list[str]) -> dict:
     """

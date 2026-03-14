@@ -1,0 +1,92 @@
+[
+  {
+    "task_id": "rename_function",
+    "condition": "baseline",
+    "output": "1.  **repository.py**: Update the `update_user` method definition in `UserRepository` to `patch_user`. This change is necessary to rename the method.",
+    "score": 0.5,
+    "all_present": true,
+    "any_forbidden": true,
+    "f_block": "",
+    "elapsed_s": 142.49
+  },
+  {
+    "task_id": "rename_function",
+    "condition": "vec_f_ner",
+    "output": "1. **repository.py**: Update the method definition in `UserRepository` to rename `update_user` to `patch_user`.\n2. **service.py**: Update all call sites where `update_user` is used to `patch_user`. There are two places where `update_user` is used. Update both places to `patch_user`.",
+    "score": 0.5,
+    "all_present": true,
+    "any_forbidden": true,
+    "f_block": "Facts: update_user(self, user_id: int, delta: UserDelta) -> bool; delete_user(self, user_id: int) -> bool; apply_update(repo: UserRepository, user_id: int, name: str, email: str) -> bool; User; from r",
+    "elapsed_s": 89.02
+  },
+  {
+    "task_id": "rename_function",
+    "condition": "vec_f_summary",
+    "output": "1. **repository.py**: Update the `UserRepository` class definition to rename `update_user` to `patch_user`. This involves changing the method name in the class definition and updating the method name in the method signature.",
+    "score": 0.5,
+    "all_present": true,
+    "any_forbidden": true,
+    "f_block": "This codebase consists of two files: `repository.py` and `service.py`. The `repository.py` file contains a `UserRepository` class with methods for finding, updating, and deleting users. The `service.p",
+    "elapsed_s": 2013.51
+  },
+  {
+    "task_id": "add_parameter",
+    "condition": "baseline",
+    "output": "1. client.py:\n   - Add a `timeout: int = DEFAULT_TIMEOUT` parameter to the `fetch` function.\n   - Update the function signature to include the `timeout` parameter.\n   - Update the `urllib.request.urlopen` call to include the `timeout` parameter.",
+    "score": 1.0,
+    "all_present": true,
+    "any_forbidden": false,
+    "f_block": "",
+    "elapsed_s": 2099.03
+  },
+  {
+    "task_id": "add_parameter",
+    "condition": "vec_f_ner",
+    "output": "1. client.py: \n   - Add a `timeout: int = DEFAULT_TIMEOUT` parameter to the `fetch` function.\n   - Update the function signature to include the `timeout` parameter.\n   - Update the urllib call to use the `timeout` parameter.",
+    "score": 1.0,
+    "all_present": true,
+    "any_forbidden": false,
+    "f_block": "Facts: get_user(user_id: int) -> dict; import urllib.request; from config import DEFAULT_TIMEOUT; from client import fetch; DEFAULT_TIMEOUT = 30",
+    "elapsed_s": 2948.29
+  },
+  {
+    "task_id": "add_parameter",
+    "condition": "vec_f_summary",
+    "output": "1. **client.py**: Update the `fetch` function to include a `timeout` parameter. Update the function signature to include the `timeout` parameter. Update the `urllib.request.urlopen` call to include the `timeout` parameter.",
+    "score": 1.0,
+    "all_present": true,
+    "any_forbidden": false,
+    "f_block": "The code consists of three files: `config.py`, `client.py`, and `api.py`. The `config.py` file contains constants for default timeout, maximum retries, and base URL. The `client.py` file contains func",
+    "elapsed_s": 2758.55
+  },
+  {
+    "task_id": "change_return_type",
+    "condition": "baseline",
+    "output": "1. `repository.py`: Change `find_by_id` method to return `Optional[User]` instead of `dict`. Update the method to return `None` if the user is not found.",
+    "score": 0.5,
+    "all_present": false,
+    "any_forbidden": false,
+    "f_block": "",
+    "elapsed_s": 2416.79
+  },
+  {
+    "task_id": "change_return_type",
+    "condition": "vec_f_ner",
+    "output": "1. **repository.py**: Change `find_by_id` method to return `Optional[User]` instead of `dict`. Update the method to return `None` if the user is not found.\n2. **service.py**: Update `find_by_id` method to use attribute access (`user.name`, `user.email`) instead of dict key access (`user['name']`, `u",
+    "score": 1.0,
+    "all_present": true,
+    "any_forbidden": false,
+    "f_block": "Facts: find_by_id(self, user_id: int) -> dict; find_by_email(self, email: str) -> dict; get_user_name(repo: UserRepository, user_id: int) -> str; get_user_email(repo: UserRepository, user_id: int) -> ",
+    "elapsed_s": 2663.98
+  },
+  {
+    "task_id": "change_return_type",
+    "condition": "vec_f_summary",
+    "output": "1. `models.py`: No changes needed.\n2. `repository.py`: Update `find_by_id` method to return `Optional[User]` instead of `dict`. This can be done by replacing `return {'id': user.id, 'name': user.name, 'email': user.email}` with `return User(id=user.id, name=user.name, email=user.email)`.\n3. `service",
+    "score": 1.0,
+    "all_present": true,
+    "any_forbidden": false,
+    "f_block": "The code consists of three files: `models.py`, `repository.py`, and `service.py`. The `models.py` file defines a `User` dataclass with three properties: `id`, `name`, and `email`. The `repository.py` ",
+    "elapsed_s": 8374.82
+  }
+]
