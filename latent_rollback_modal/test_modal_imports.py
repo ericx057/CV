@@ -1,5 +1,6 @@
 def test_core_benchmark_modules_import():
     import latent_rollback_modal.benchmark_ablation
+    import latent_rollback_modal.benchmark_integration_runner
     import latent_rollback_modal.benchmark_code_refactor
     import latent_rollback_modal.benchmark_matrix_runner
     import latent_rollback_modal.benchmark_repobench

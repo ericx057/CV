@@ -29,14 +29,28 @@ def test_modal_benchmark_registry_covers_all_benchmark_families():
         "refactor",
         "integration",
     } <= set(BENCHMARK_ENTRYPOINTS)
+    assert BENCHMARK_ENTRYPOINTS["integration"] == "latent_rollback_modal.benchmark_integration_runner"
 
 
 def test_modal_cli_targets_known_benchmark_module():
     from latent_rollback_modal.modal_cli import resolve_benchmark_module
 
     assert resolve_benchmark_module("repobench").endswith("benchmark_repobench")
+    assert resolve_benchmark_module("integration").endswith("benchmark_integration_runner")
     with pytest.raises(KeyError):
         resolve_benchmark_module("missing")
+
+
+def test_modal_gpu_profile_is_sized_for_large_models():
+    from latent_rollback_modal.modal_app import (
+        DEFAULT_FUNCTION_TIMEOUT_SECONDS,
+        DEFAULT_GPU,
+        DEFAULT_STARTUP_TIMEOUT_SECONDS,
+    )
+
+    assert DEFAULT_GPU == "A100-80GB"
+    assert DEFAULT_FUNCTION_TIMEOUT_SECONDS == 24 * 60 * 60
+    assert DEFAULT_STARTUP_TIMEOUT_SECONDS == 60 * 60
 
 
 def test_modal_package_readme_exists():
