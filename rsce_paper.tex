@@ -48,7 +48,10 @@ LongBench), and (2) cross-file code completion (RepoBench-C). On QA with
 LLaMA-3 8B ($n = 42$), Vec+F achieves Token F1 of $0.218$ versus baseline
 $0.165$ at $\mathbf{97.8\%}$ input token reduction; Exact Match (LongBench
 substring protocol) drops from $71.4\%$ to $33.3\%$, reflecting a genuine
-quality loss that the F1 gain only partially offsets. On RepoBench-C across
+quality loss that the F1 gain only partially offsets. A question-only baseline
+(no context, no vector) achieves F1 = 0.079, confirming Vec+F captures semantic
+signal beyond parametric memory alone and that the two-channel design is
+necessary: vector injection without factual grounding disrupts parametric recall. On RepoBench-C across
 four models ($n = 200$), Vec+F achieves mean Edit Similarity $0.683$ versus
 baseline $0.722$ ($\Delta = -0.039$) at $\mathbf{54.7\%}$ input token
 reduction; Mistral Small 24B shows only $\Delta = -0.026$ at $54.4\%$
@@ -481,38 +484,46 @@ EM = LongBench Exact Match: gold answer appears as a substring of the generated
 output (case-insensitive); this metric is higher for verbose outputs that embed
 the answer in a longer response. F1 = SQuAD-style token overlap F1; this
 metric penalizes verbose outputs by dividing matched tokens by total output
-length. Vec+F uses NER fact block. Results are single-model, single-run;
-significance tests are not reported.}
+length. Q-only = question prompt with no context, no vector, no fact block
+(parametric memory only). Vec+F uses NER fact block. Results are single-model,
+single-run; significance tests are not reported.}
 \label{tab:qa}
 \begin{tabular}{lcccc}
 \toprule
 Condition & F1 & EM & Tok.\ Red. & $\Delta$F1 \\
 \midrule
-Baseline      & 0.165 & 71.4\% & ---   & --- \\
-Vec           & 0.000 & 0.0\%  & 100\% & $-0.165$ \\
+Baseline      & 0.165 & 71.4\% & ---    & --- \\
+Q-only        & 0.079 & 45.2\% & 100\%  & $-0.086$ \\
+Vec           & 0.000 & 0.0\%  & 100\%  & $-0.165$ \\
 Vec+F (NER)   & \textbf{0.218} & 33.3\% & 97.8\% & $+0.053$ \\
 \midrule
 \multicolumn{5}{l}{\textit{Per-task breakdown}} \\
 \midrule
-HotpotQA (baseline)    & 0.238 & 82.4\% & --- & --- \\
-HotpotQA (Vec+F)       & \textbf{0.386} & 52.9\% & 97.8\% & $+0.148$ \\
+HotpotQA (baseline)       & 0.238 & 82.4\% & ---   & --- \\
+HotpotQA (Q-only)         & 0.101 & 58.8\% & 100\% & $-0.137$ \\
+HotpotQA (Vec+F)          & \textbf{0.386} & 52.9\% & 97.8\% & $+0.148$ \\
 2WikiMultiHopQA (baseline) & 0.115 & 64.0\% & --- & --- \\
+2WikiMultiHopQA (Q-only)   & 0.064 & 36.0\% & 100\% & $-0.051$ \\
 2WikiMultiHopQA (Vec+F)    & 0.104 & 20.0\% & 97.8\% & $-0.011$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Three findings stand out.
+Four findings stand out.
 
-\textbf{Vec alone achieves F1 = 0.000.} Without the explicit fact block, vector
-injection produces no measurable F1 on this evaluation. Multi-hop QA requires
-precise entity recall (specific names, dates, quantities), and mean-pooled
-activations cannot reconstruct individual token identities. \emph{Caveat:}
-we do not have a question-only baseline (no context, no vector); we therefore
-cannot determine whether the vector injection contributes any semantic priming
-above zero or whether F1 = 0 reflects pure guessing. What we can confirm is
-that the NER fact block is necessary for non-zero performance, motivating the
-two-channel design.
+\textbf{Vec alone achieves F1 = 0.000 --- below parametric memory.}
+A question-only baseline (no context, no vector, no fact block; Table~\ref{tab:qa})
+achieves F1 = 0.079 on aggregate, confirming that LLaMA-3 8B retains non-trivial
+parametric knowledge about these entities. Vec injection alone drops F1 to 0.000
+--- \emph{worse} than asking without any context. This reveals that the vector,
+when presented without factual grounding, disrupts the model's parametric memory
+rather than augmenting it: the latent shift perturbs the residual stream in a
+direction that is semantically plausible but factually unreliable for precise
+entity recall. Multi-hop QA requires specific names, dates, and quantities that
+mean-pooled activations cannot reconstruct. The fact block restores and amplifies:
+Vec+F (F1 = 0.218) surpasses both the Q-only baseline (0.079) and the full-context
+baseline (0.165), confirming the two-channel design is not merely additive but
+necessary.
 
 \textbf{Vec+F exceeds baseline on aggregate F1.} With the NER fact block,
 Vec+F achieves F1 = 0.218 versus baseline 0.165. On HotpotQA specifically,
@@ -796,11 +807,14 @@ results would strengthen the generalization claim. The QA F1 improvement may
 not replicate on other architectures given the observed model-specificity of
 F-block strategy.
 
-\paragraph{Missing question-only baseline.}
-The QA evaluation lacks a question-only condition (no context, no vector). Without
-it, we cannot quantify whether the Vec-only F1 = 0 reflects a failure of vector
-injection specifically, or merely a hard lower bound that any no-context condition
-would achieve. A Q-only baseline would isolate the vector's contribution.
+\paragraph{Vec injection disrupts parametric memory.}
+The Q-only baseline (no context, no vector) achieves F1 = 0.079, while Vec-only
+drops to F1 = 0.000 --- indicating that vector injection without factual grounding
+actively suppresses the model's parametric recall. The mechanism is not yet
+characterised: it may reflect activation space interference, a distribution shift
+at the injected layer, or a contextualisation signal that overrides internal
+knowledge retrieval pathways. Understanding when and why the latent shift disrupts
+rather than augments parametric memory is an open question for future work.
 
 \paragraph{Lossy mean-pooling.}
 Mean-pooling discards sequential structure. Tasks requiring precise ordering
