@@ -35,12 +35,14 @@ import modal
 # ---------------------------------------------------------------------------
 
 image = (
-    modal.Image.debian_slim(python_version="3.11")
+    modal.Image.from_registry(
+        "pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime",
+        add_python="3.11",
+    )
     .pip_install(
-        "torch==2.3.1",
-        "transformers>=4.43.0",
+        "transformers>=4.43.0,<5.0.0",
         "accelerate>=0.30.0",
-        "datasets>=2.20.0",
+        "datasets>=2.20.0,<3.0.0",
         "huggingface_hub>=0.23.0",
         "sentencepiece",
         "protobuf",
@@ -52,7 +54,7 @@ app = modal.App("rsce-qa-benchmark", image=image)
 # Persistent volume to cache HF model weights across runs
 vol = modal.Volume.from_name("rsce-hf-weights", create_if_missing=True)
 
-HF_MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
+HF_MODEL_ID = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 INJECTION_LAYER = 14   # calibrated f(M) for LLaMA-3 8B
 N_PER_TASK = 200       # full LongBench test split per task
 SEED = 42
@@ -64,7 +66,7 @@ MAX_NEW_TOKENS = 80
 # ---------------------------------------------------------------------------
 
 @app.function(
-    gpu="A10G",
+    gpu="A100",
     timeout=7200,
     volumes={"/weights": vol},
     secrets=[modal.Secret.from_name("huggingface-secret")],
@@ -176,8 +178,11 @@ def run_qa_benchmark(model_id: str = HF_MODEL_ID) -> str:
         v = (ctx_vec / norm).to(model.device, dtype=torch.bfloat16)
 
         def hook(module, inp, output):
-            h = output[0] + scale * v[None, None, :]
-            return (h,) + output[1:]
+            if isinstance(output, tuple):
+                h = output[0] + scale * v[None, None, :]
+                return (h,) + output[1:]
+            else:
+                return output + scale * v[None, None, :]
 
         handle = model.model.layers[layer].register_forward_hook(hook)
         ids = encode(question_text)
@@ -195,13 +200,13 @@ def run_qa_benchmark(model_id: str = HF_MODEL_ID) -> str:
     results = []
 
     for task in ("hotpotqa", "2wikimqa"):
-        ds = load_dataset("THUDM/LongBench", task, split="test")
+        ds = load_dataset("THUDM/LongBench", task, split="test", trust_remote_code=True)
         import random
         rng = random.Random(SEED)
         rows = list(ds)
         # filter by context length (200-4000 words)
         rows = [r for r in rows
-                if 200 <= len(r.get("context", "").split()) <= 4000]
+                if 200 <= len(r.get("context", "").split()) <= 12000]
         selected = rng.sample(rows, min(N_PER_TASK, len(rows)))
         print(f"  {task}: {len(selected)} examples after filtering")
 

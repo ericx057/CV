@@ -151,10 +151,11 @@ def generate_with_context_injection(
     ctx_v = ctx_v.to(wrapper.model.device, dtype=torch.bfloat16)
 
     def hook_fn(module, input, output):
-        # output is a tuple: (hidden_states, ...) for all decoder layer types
-        hidden = output[0]
-        hidden = hidden + scale * ctx_v[None, None, :]
-        return (hidden,) + output[1:]
+        if isinstance(output, tuple):
+            hidden = output[0] + scale * ctx_v[None, None, :]
+            return (hidden,) + output[1:]
+        else:
+            return output + scale * ctx_v[None, None, :]
 
     handle = wrapper.layers[layer].register_forward_hook(hook_fn)
 

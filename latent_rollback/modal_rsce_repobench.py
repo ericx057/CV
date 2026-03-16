@@ -39,12 +39,14 @@ import modal
 # ---------------------------------------------------------------------------
 
 image = (
-    modal.Image.debian_slim(python_version="3.11")
+    modal.Image.from_registry(
+        "pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime",
+        add_python="3.11",
+    )
     .pip_install(
-        "torch==2.3.1",
-        "transformers>=4.43.0",
+        "transformers>=4.43.0,<5.0.0",
         "accelerate>=0.30.0",
-        "datasets>=2.20.0",
+        "datasets>=2.20.0,<3.0.0",
         "huggingface_hub>=0.23.0",
         "rank_bm25>=0.2.2",
         "sentencepiece",
@@ -61,7 +63,7 @@ vol = modal.Volume.from_name("rsce-hf-weights", create_if_missing=True)
 
 MODEL_REGISTRY: dict[str, dict] = {
     "llama3-8b": {
-        "hf_id": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "hf_id": "meta-llama/Meta-Llama-3.1-8B-Instruct",
         "injection_layer": 14,   # 44% depth, calibrated
         "gpu": "A10G",
     },
@@ -92,11 +94,11 @@ MAX_NEW_TOKENS = 50
 # ---------------------------------------------------------------------------
 
 @app.function(
-    gpu="A100-40GB",       # overridden per-call via .with_options() if needed
+    gpu="A100-80GB",
     timeout=7200,
     volumes={"/weights": vol},
     secrets=[modal.Secret.from_name("huggingface-secret")],
-    memory=40960,
+    memory=81920,
 )
 def run_repobench_model(model_key: str) -> str:
     """Runs one model. Returns CSV string."""
@@ -159,16 +161,20 @@ def run_repobench_model(model_key: str) -> str:
         return "Facts: " + "; ".join(selected)
 
     def format_cross_file(row: dict) -> str:
-        snippets = row.get("context", [])
-        if isinstance(snippets, str):
-            return snippets
-        parts = []
-        for s in snippets:
-            if isinstance(s, dict):
-                parts.append(s.get("snippet", ""))
+        parts = [f"# Repo: {row.get('repo_name', '')}"]
+        for snippet in row.get("context", []):
+            if isinstance(snippet, dict):
+                parts.append(f"# Path: {snippet.get('path', '')}\n{snippet.get('snippet', '')}")
             else:
-                parts.append(str(s))
+                parts.append(str(snippet))
         return "\n\n".join(p for p in parts if p)
+
+    def format_in_file(row: dict) -> str:
+        return (
+            f"# Path: {row.get('file_path', '')}\n"
+            f"{row.get('import_statement', '')}\n"
+            f"{row.get('cropped_code', '')}"
+        )
 
     # ---- load model -------------------------------------------------------
 
@@ -220,8 +226,11 @@ def run_repobench_model(model_key: str) -> str:
         v = (ctx_vec / norm).to(model.device, dtype=torch.bfloat16)
 
         def hook(module, inp, output):
-            h = output[0] + scale * v[None, None, :]
-            return (h,) + output[1:]
+            if isinstance(output, tuple):
+                h = output[0] + scale * v[None, None, :]
+                return (h,) + output[1:]
+            else:
+                return output + scale * v[None, None, :]
 
         handle = model.model.layers[layer].register_forward_hook(hook)
         ids = encode(prompt)
@@ -235,7 +244,7 @@ def run_repobench_model(model_key: str) -> str:
     # ---- load dataset -----------------------------------------------------
 
     print("Loading RepoBench-C ...")
-    ds = load_dataset("Leolty/repobench", "python", split="train", trust_remote_code=True)
+    ds = load_dataset("tianyang/repobench_python_v1.1", split="cross_file_first", trust_remote_code=True)
     rows = [r for r in ds if r.get("next_line", "").strip()]
     rng = random.Random(SEED)
     selected = rng.sample(rows, min(N_PER_MODEL, len(rows)))
@@ -246,9 +255,9 @@ def run_repobench_model(model_key: str) -> str:
     results = []
     for i, row in enumerate(selected):
         cross_file = format_cross_file(row)
-        in_file    = row.get("code", "")
+        in_file    = format_in_file(row)
         next_line  = row.get("next_line", "").strip()
-        ex_id      = str(row.get("id", i))
+        ex_id      = f"{row.get('repo_name', '')}#{i}"
         query      = in_file[-200:] if len(in_file) > 200 else in_file
 
         baseline_prompt = (
