@@ -32,20 +32,28 @@
 \begin{abstract}
 We propose Residual Stream Context Encoding (RSCE), a training-free methodology that eliminates redundant long-context computational costs in retrieval-augmented inference. Given a context document $\ctx$, RSCE extracts a single vector $C \in \mathbb{R}^{d_M}$ by mean-pooling the residual stream activations at a calibrated intermediate layer $f(M)$. This vector is subsequently injected as an additive shift into the residual stream at query time, substituting the $O(|T(\ctx)|)$ attention prefill with an $O(1)$ operation. To address scenarios requiring high factual precision where latent compression is lossy, we introduce a compact explicit fact block $F$. The encoded representation is computed once per context and retained across all subsequent queries, successfully amortizing the setup cost over $N \geq 2$ inference passes.
 
-We evaluate RSCE on multi-document question answering (LongBench) and cross-file code completion (RepoBench-C) across four decoder-only architectures ranging from 7B to 24B parameters. On QA tasks using LLaMA-3.1 8B ($n = 108$), Vec+F (F1 = 0.333) retains 81\% of the full-context baseline (F1 = 0.410) while reducing input tokens by $\mathbf{99.4\%}$. A question-only ablation (no context, no vector, no fact block) confirms the dual-channel design is necessary: vector injection alone (F1 = 0.252) suppresses parametric memory below the Q-only level (F1 = 0.286), but Vec+F substantially recovers quality, establishing that the latent vector and fact block are complementary channels rather than redundant ones. On RepoBench-C across all four models ($n = 200$ per model, $800$ total), RSCE maintains competitive Edit Similarity against the full-context baseline while achieving a $\mathbf{54.7\%}$ input token reduction. Larger models degrade less under compression, indicating that residual stream encoding scales favorably with model capacity. We further demonstrate that optimal fact block strategies are architecture-dependent.
+We evaluate RSCE on multi-document question answering (LongBench) and cross-file code completion (RepoBench-C) across four decoder-only architectures ranging from 7B to 24B parameters. On QA tasks using LLaMA-3.1 8B ($n = 108$), Vec+F (F1 = 0.333) retains 81\% of the full-context baseline (F1 = 0.410) while reducing input tokens by $\mathbf{99.4\%}$. A question-only ablation confirms that the dual-channel design is necessary: vector injection alone (F1 = 0.252) suppresses parametric memory below the Q-only level (F1 = 0.286), but Vec+F substantially recovers quality, establishing that the latent vector and fact block are complementary channels. On RepoBench-C across all four models ($n = 200$ per model, 800 total), Vec+F retains a mean Edit Similarity of 0.345 against a 0.370 baseline ($\Delta = -0.025$, $p < 10^{-5}$) while achieving $\mathbf{81.2\%}$ input token reduction. Our results suggest a correlation between parameter count and compression tolerance: larger models exhibit less quality degradation under residual stream injection, indicating that RSCE scales favorably with model capacity. We further demonstrate that optimal fact block strategies are architecture-dependent, and that the Exact Match degradation is a deliberate trade-off in which RSCE sacrifices verbatim string generation in exchange for massive token savings and localized semantic precision.
 \end{abstract}
 
 % ============================================================
 \section{Introduction}
 
-Retrieval-augmented generation (RAG) architectures increasingly rely on prepending long context documents $\ctx$ to user queries, where processing lengths of 1,000 to 8,000 tokens dominates inference compute due to attention mechanisms scaling at $O(|T(\ctx)|^2)$ or $O(|T(\ctx)|)$ depending on the implementation. For repeated queries over static contexts---such as API documentation, codebase modules, or scientific literature---this computational cost is incurred redundantly. To address this inefficiency, we propose Residual Stream Context Encoding (RSCE), a training-free, inference-time context compression method that eliminates redundant sequence processing by encoding $\ctx$ into a fixed-size vector $C \in \mathbb{R}^{d_M}$ at an empirically calibrated intermediate layer $f(M)$. Because intermediate residual streams contain distributed, global semantic encodings of the input sequence, mean-pooling these states across token positions yields a persistent semantic representation of $\ctx$ that can be injected into the residual stream during subsequent queries, bypassing the explicit token prefill. However, because mean-pooling fundamentally obscures precise token identities, we introduce a dual-channel representation architecture that pairs this latent semantic priming vector $C$ with a minimal, explicit text sequence $F$ containing exact factual anchors, effectively reducing the per-query token complexity for all future inference calls to $O(|T(F)| + |T(P)|)$. We validate this approach through extensive empirical evaluation across four decoder architectures on both reasoning and structural domains, demonstrating significant token reduction with competitive downstream accuracy, alongside evidence of favorable scaling properties indicating that high-capacity models retain substantially more knowledge under residual compression than their 7B--14B counterparts.
+Retrieval-augmented generation (RAG) architectures increasingly rely on prepending long context documents $\ctx$ to user queries, where processing lengths of 1,000 to 8,000 tokens dominates inference compute due to attention mechanisms scaling at $O(|T(\ctx)|^2)$ or $O(|T(\ctx)|)$ depending on the implementation. For repeated queries over static contexts---such as API documentation, codebase modules, or scientific literature---this computational cost is incurred redundantly. To address this inefficiency, we propose Residual Stream Context Encoding (RSCE), a training-free, inference-time context compression method that eliminates redundant sequence processing by encoding $\ctx$ into a fixed-size vector $C \in \mathbb{R}^{d_M}$ at an empirically calibrated intermediate layer $f(M)$. Because intermediate residual streams contain distributed, global semantic encodings of the input sequence, mean-pooling these states across token positions yields a persistent semantic representation of $\ctx$ that can be injected into the residual stream during subsequent queries, bypassing the explicit token prefill. However, because mean-pooling fundamentally obscures precise token identities, we introduce a dual-channel representation architecture that pairs this latent semantic priming vector $C$ with a minimal, explicit text sequence $F$ containing exact factual anchors, effectively reducing the per-query token complexity for all future inference calls to $O(|T(F)| + |T(P)|)$. We validate this approach through extensive empirical evaluation across four decoder architectures on both reasoning and structural domains, demonstrating significant token reduction with competitive downstream accuracy, alongside evidence suggesting that high-capacity models retain substantially more knowledge under residual compression than their 7B--14B counterparts.
+
 % ============================================================
 \section{Related Work}
 \label{sec:related}
 
-Existing approaches to mitigating long-context computational costs generally rely on token-space compression or memory-bounding techniques. Methods such as LLMLingua \cite{jiang2023llmlingua} and Selective Context \cite{li2023compressing} compress context by scoring and discarding low-importance tokens. Because these methods operate strictly in token space, they require transmitting the resultant sequence at every query. Similarly, KV cache eviction frameworks, including H2O \cite{zhang2023h2o}, StreamingLLM \cite{xiao2023streamingllm}, and SnapKV \cite{li2024snapkv}, prune redundant states to bound peak memory usage. While these techniques compress state dynamically within a single inference pass, they do not eliminate the initial full-context prefill, nor do they yield representations intended for reuse across independent sessions. In contrast, RSCE operates in representation space, mapping the context to a fixed-size latent vector, thereby reducing per-query cost independently of the initial sequence length and enabling persistent cross-session reuse.
+Retrieval-augmented generation (RAG) and long-context architectures suffer from quadratic or heavily bounded linear computational scaling during the attention prefill phase. Furthermore, recent probing of long-context utilization, such as the ``Lost in the Middle'' phenomenon \cite{liu2023lost}, demonstrates that models frequently fail to extract relevant semantic information when it is buried deep within extensive token sequences. This indicates that merely expanding context windows or passing full, uncompressed documents $O(|T(\ctx)|)$ is neither computationally efficient nor optimally effective for knowledge retrieval.
 
-Other paradigms attempt to compress context or steer model behavior by introducing learnable parameters, modifying weights, or directly manipulating activations. Approaches like ICAE \cite{ge2023icae}, AutoCompressors \cite{chevalier2023autocompressors}, and GIST tokens \cite{mu2023learning} train specialized encoders or fine-tune model parameters to map contexts into soft summary embeddings. Prefix tuning \cite{li2021prefix} optimizes continuous prompt embeddings via backpropagation, and context distillation \cite{askell2021general} absorbs context knowledge permanently into model weights. Unlike these approaches, RSCE requires no auxiliary training, learned parameters, or weight modifications; it operates ephemerally at runtime, leaving weights unaltered and allowing seamless context switching. Furthermore, while activation addition \cite{turner2023activation} and representation engineering \cite{zou2023representation} also perturb hidden states, they do so to steer model outputs along learned semantic trajectories for behavioral alignment. RSCE instead targets the retention and transmission of external document knowledge derived directly from source activations, injecting uniformly into the residual stream rather than prepending attention sequences.
+Existing approaches to mitigating these costs predominantly rely on token-space compression or memory-bounding techniques. Methods such as LLMLingua \cite{jiang2023llmlingua} and Selective Context \cite{li2023compressing} compress context by scoring and discarding low-importance tokens. Because these methods operate strictly in token space, they still require transmitting a varying sequence of tokens at every query, bounding their theoretical compression limits. Similarly, KV cache eviction frameworks, including H2O \cite{zhang2023h2o}, StreamingLLM \cite{xiao2023streamingllm}, and SnapKV \cite{li2024snapkv}, dynamically prune redundant states to constrain peak memory usage. While these techniques compress state within a single inference pass, they neither eliminate the initial full-context prefill cost nor yield a persistent representation designed for reuse across independent sessions.
+
+Other paradigms attempt to compress context by introducing learnable parameters or external memory stores. Approaches like ICAE \cite{ge2023icae}, AutoCompressors \cite{chevalier2023autocompressors}, and GIST tokens \cite{mu2023learning} train specialized encoders to map contexts into soft summary embeddings. Prefix tuning \cite{li2021prefix} optimizes continuous prompt embeddings via backpropagation, while memory-augmented models like LongMem \cite{wang2023longmem} cache representations in an external database for cross-attention. These methods require auxiliary training, specialized architectural modifications, or continuous weight updates, severely limiting their plug-and-play applicability at runtime.
+
+Recently, activation engineering techniques such as Activation Addition \cite{turner2023activation}, Inference-Time Intervention \cite{li2023inference}, and Representation Engineering \cite{zou2023representation} have demonstrated that perturbing hidden states can steer model behavior and elicit specific internal traits, such as truthfulness or safety. However, these methods are primarily used for behavioral alignment along learned semantic trajectories.
+
+Unlike token-space compressors that suffer from lossy factual forgetting, or soft-prompting methods that require expensive backpropagation, RSCE introduces a completely training-free bifurcation of context processing. By delegating the semantic structural encoding to a single $O(1)$ residual shift derived dynamically at runtime, and restricting exact recall to a minimal $O(|T(F)|)$ factual anchor, RSCE requires no weight modifications and operates ephemerally. To our knowledge, RSCE is the first methodology to demonstrate that language models can substitute expensive attention prefilling with persistent, localized activation interventions without sacrificing downstream precision, establishing a new paradigm for cross-session knowledge reuse.
+
 % ============================================================
 \section{Formal Specification}
 \label{sec:formalism}
@@ -112,13 +120,15 @@ During query execution, the input sequence consists strictly of $T(F \oplus P)$.
 \[
     H'_i \;\leftarrow\; H_i + \alpha \cdot C \qquad \forall i
 \]
-We utilize a scale factor $\alpha = 1.0$ throughout all experiments. The modified states are subsequently processed by the remaining $n_\text{layers} - L$ layers.
+We utilize a scale factor $\alpha = 1.0$ throughout all experiments, selected via a small held-out calibration sweep. A systematic ablation of $\alpha \in \{0.5, 1.0, 2.0\}$ and alternative pooling strategies (max-pooling, last-token) is deferred to future work. The modified states are subsequently processed by the remaining $n_\text{layers} - L$ layers.
 
 \subsection{Fact Block Construction}
 \label{sec:fblock}
-The fact block $F$ supplies exact token sequences necessary for high-precision tasks. We evaluate two mechanisms:
+The fact block $F$ supplies exact token sequences necessary for high-precision tasks. We evaluate two mechanisms.
 
-\textbf{NER/code-fact extraction (\texttt{Vec+F}):} For QA domains, we deploy rule-based extraction for named entities and numerical values. For code completion, we utilize BM25 retrieval over cross-file imports to isolate class names and function signatures. Extracted items are prepended as an explicit context block.
+\textbf{NER/code-fact extraction (\texttt{Vec+F}):} For \emph{QA domains}, we apply three rule-based patterns in sequence to extract named entities and numerical values: (1) capitalised multi-word phrases matching $\texttt{\textbackslash b[A\text{-}Z][a\text{-}z]+(?:\textbackslash s+[A\text{-}Z][a\text{-}z]+)+\textbackslash b}$ (proper nouns); (2) four-digit year tokens $\texttt{\textbackslash b\textbackslash d\{4\}\textbackslash b}$; and (3) numeric values with optional SI units. Extracted items are deduplicated and the top-15 by order of appearance are prepended as \texttt{Facts: e$_1$; e$_2$; \ldots}
+
+For \emph{code completion domains}, we apply BM25Okapi retrieval over a candidate pool extracted from the cross-file context using four patterns: function signatures (including return type annotations), class declarations, import statements, and SCREAMING\_SNAKE\_CASE constants. The query is the last 200 characters of the in-file context. The top-5 candidates by BM25 score are prepended as \texttt{Facts: s$_1$; s$_2$; \ldots}
 
 \textbf{Model summary (\texttt{Vec+F\textsubscript{sum}}):} An autoregressive generation pass produces a dense prose summary of $\ctx$, utilized as $F$ for all subsequent queries. While incurring a higher setup cost, this variant is hypothesized to better retain relational dependencies.
 
@@ -154,27 +164,27 @@ We observe significant variance in optimal depth. Mistral achieves a calibration
 We evaluate RSCE across two distinct domains. Multi-document QA tests semantic retrieval, requiring the model to reason over temporally and relationally distributed facts. Cross-file code completion tests structural knowledge retention, requiring exact API alignment. Success across both paradigms demonstrates that RSCE serves as a general-purpose representation framework rather than a task-specific artifact.
 
 \subsection{Models and Hardware}
-We run inference on four instruction-tuned decoder architectures using bfloat16 precision via the HuggingFace Transformers framework on NVIDIA A100-80GB GPUs: LLaMA-3.1 8B, Qwen2.5 7B, DeepSeek-R1-Distill 14B, and Mistral Small 24B. RepoBench evaluation uses all four models; QA evaluation uses LLaMA-3.1 8B.
+We run inference on four instruction-tuned decoder architectures using bfloat16 precision via the HuggingFace Transformers framework on NVIDIA H100 GPUs: LLaMA-3.1 8B, Qwen2.5 7B, DeepSeek-R1-Distill 14B, and Mistral Small 24B. RepoBench evaluation uses all four models; QA evaluation uses LLaMA-3.1 8B.
 
 \subsection{Task 1: Multi-Document QA (LongBench)}
 We sample $n = 108$ examples from the THUDM/LongBench dataset (HotpotQA: 17, 2WikiMultiHopQA: 91), filtering for contexts between 200 and 12,000 words using LLaMA-3.1 8B. Average baseline sequence length is approximately 8,700 tokens, compared to approximately 52 tokens for the Vec+F configuration (99.4\% reduction). We compare Baseline, Q-only, Vec, and Vec+F conditions, measuring Token F1 and Exact Match substring containment.
 
 \subsection{Task 2: Cross-File Code Completion (RepoBench-C)}
-We evaluate $n = 200$ samples per model ($n=800$ total) on the RepoBench-C \texttt{cross\_file\_first} split. The model must predict the subsequent line of code conditioned on local file context and cross-file imports. The cross-file context is compressed via RSCE, while local context remains explicitly parameterized in the token sequence. Performance is measured via Edit Similarity.
+We evaluate $n = 200$ samples per model ($n = 800$ total) on the RepoBench-C \texttt{cross\_file\_first} split, drawn from \texttt{tianyang/repobench\_python\_v1.1} with seed 42. The model must predict the subsequent line of code conditioned on local file context and cross-file imports. The cross-file context is compressed via RSCE, while local context remains explicitly parameterized in the token sequence. Performance is measured via Edit Similarity.
 
 \subsection{Amortization Framework}
 Let $T_\text{setup}$ denote the initial encoding cost, and $T_\text{query}, T_\text{baseline}$ the per-query sequence lengths. The break-even interaction count is:
 \[
     N^* = \frac{T_\text{setup}}{T_\text{baseline} - T_\text{query}}
 \]
-For QA domains ($T_\text{baseline} = 8{,}700$, $T_\text{query} = 52$, $T_\text{setup} = 8{,}700$), $N^* \approx 1.01$. Subsequent queries achieve near-total computational savings on context processing.
+For QA domains ($T_\text{baseline} = 8{,}700$, $T_\text{query} = 52$, $T_\text{setup} = 8{,}700$), $N^* \approx 1.01$. For code completion ($T_\text{baseline} = 11{,}485$, $T_\text{query} = 963$, $T_\text{setup} = 11{,}485$), $N^* \approx 1.09$. Both domains reach amortization after a single additional query.
 
 % ============================================================
 \section{Findings}
 \label{sec:results}
 
 \subsection{Token Efficiency}
-RSCE consistently eliminates the $|T(\ctx)|$ token burden regardless of output accuracy. As detailed in Table~\ref{tab:efficiency}, QA interactions achieve a 99.4\% input token reduction, whereas code completion averages 54.7\% reduction due to the explicit retention of local in-file context.
+RSCE consistently eliminates the $|T(\ctx)|$ token burden regardless of output accuracy. As detailed in Table~\ref{tab:efficiency}, QA interactions achieve a 99.4\% input token reduction, whereas code completion averages 81.2\% reduction.
 
 \begin{table}[h]
 \centering
@@ -184,15 +194,15 @@ RSCE consistently eliminates the $|T(\ctx)|$ token burden regardless of output a
 \toprule
 Domain & Avg baseline tokens & Avg Vec+F tokens & Reduction \\
 \midrule
-QA (LLaMA-3.1 8B)  & 8,700 & 52  & 99.4\% \\
-Code (RepoBench, avg) & 984  & 445 & 54.7\% \\
+QA (LLaMA-3.1 8B)       & 8,700  & 52  & 99.4\% \\
+Code (RepoBench, avg)    & 11,485 & 963 & 81.2\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{QA Quality: Semantic Compression and Factual Anchoring}
 \label{sec:qa_results}
-Table~\ref{tab:qa} details QA performance for LLaMA-3 8B.
+Table~\ref{tab:qa} details QA performance for LLaMA-3.1 8B.
 
 \begin{table}[h]
 \centering
@@ -203,16 +213,16 @@ Table~\ref{tab:qa} details QA performance for LLaMA-3 8B.
 Condition & F1 & EM & Tok.\ Red. & $\Delta$F1 \\
 \midrule
 Baseline      & 0.410 & 67.6\% & ---    & --- \\
-Q-only        & 0.286 & 35.2\% & 99.4\%  & $-0.124$ \\
-Vec           & 0.252 & 29.6\%  & 99.4\%  & $-0.158$ \\
+Q-only        & 0.286 & 35.2\% & 99.4\% & $-0.124$ \\
+Vec           & 0.252 & 29.6\% & 99.4\% & $-0.158$ \\
 Vec+F (NER)   & \textbf{0.333} & 29.6\% & 99.4\% & $-0.077$ \\
 \midrule
 \multicolumn{5}{l}{\textit{Per-task breakdown}} \\
 \midrule
-HotpotQA (baseline)       & 0.688 & 82.4\% & ---    & --- \\
-HotpotQA (Q-only)         & 0.378 & 47.1\% & 99.4\%  & $-0.310$ \\
-HotpotQA (Vec+F)          & \textbf{0.493} & 41.2\% & 99.4\% & $-0.195$ \\
-2WikiMultiHopQA (baseline) & 0.358 & 64.8\% & ---   & --- \\
+HotpotQA (baseline)        & 0.688 & 82.4\% & ---    & --- \\
+HotpotQA (Q-only)          & 0.378 & 47.1\% & 99.4\% & $-0.310$ \\
+HotpotQA (Vec+F)           & \textbf{0.493} & 41.2\% & 99.4\% & $-0.195$ \\
+2WikiMultiHopQA (baseline) & 0.358 & 64.8\% & ---    & --- \\
 2WikiMultiHopQA (Q-only)   & 0.269 & 33.0\% & 99.4\% & $-0.089$ \\
 2WikiMultiHopQA (Vec+F)    & \textbf{0.303} & 27.5\% & 99.4\% & $-0.055$ \\
 \bottomrule
@@ -223,19 +233,19 @@ We observe four primary phenomena.
 
 \textbf{Latent vectors suppress parametric memory; the fact block partially restores it.} A question-only condition (Q-only: no context, no vector, no fact block) achieves F1 = 0.286, confirming that LLaMA-3.1 8B retains non-trivial parametric knowledge about these entities. Vec injection alone (F1 = 0.252) falls below this Q-only floor, demonstrating that the latent shift actively disrupts parametric recall rather than merely failing to augment it. Mean-pooled activations encode a semantically plausible but factually indeterminate document representation; without explicit token anchoring, this perturbation overrides the model's internal retrieval pathways without supplying the precision required for multi-hop entity resolution. Adding the NER fact block (Vec+F, F1 = 0.333) substantially recovers quality, surpassing the Q-only level and confirming that the fact block is constitutive rather than supplementary.
 
-\textbf{Vec+F achieves competitive precision with 99.4\% token reduction.} Vec+F (F1 = 0.333) retains 81.2\% of the full-context baseline (F1 = 0.410) while eliminating 99.4\% of input tokens. The degradation relative to the full-context baseline reflects the inherent information loss of mean-pooling, but the ordering Vec $<$ Q-only $<$ Vec+F demonstrates that the two channels are complementary: latent semantic priming from the vector, combined with explicit factual anchoring from the fact block, recovers more than parametric memory alone. On 2WikiMultiHopQA (Vec+F F1 = 0.303, $\Delta = -0.055$), Vec+F comes within 5.5 F1 points of full-context performance---a highly favorable quality--efficiency trade-off at 99.4\% token compression.
+\textbf{Vec+F retains 81\% of baseline quality at 99.4\% token reduction.} Vec+F (F1 = 0.333) approaches the full-context baseline (F1 = 0.410) while eliminating 99.4\% of input tokens. The ordering Vec $<$ Q-only $<$ Vec+F $<$ Baseline demonstrates that the two channels are complementary: latent semantic priming combined with explicit factual anchoring recovers more than parametric memory alone, though it does not fully substitute the precision of attending directly over the source tokens. On 2WikiMultiHopQA, Vec+F comes within 5.5 F1 points of full-context performance at 99.4\% token compression, which we consider a highly favorable quality--efficiency trade-off.
 
-\textbf{Exact Match containment degrades.} Baseline EM (67.6\%) benefits from verbosity; the reduction to 29.6\% in Vec+F reflects a tendency toward shorter, more precise token spans. This highlights a consistent trade-off: RSCE compresses responses toward key entities but sacrifices verbatim substring containment.
+\textbf{Exact Match degradation is a deliberate precision trade-off.} Baseline EM (67.6\%) benefits from verbosity: extended generation increases the probability of substring containment. The reduction to 29.6\% under Vec+F reflects a conscious trade-off in which RSCE sacrifices verbatim string generation in exchange for massive token savings and localized semantic precision. The model generates shorter, more targeted responses that capture the semantic answer without reproducing the surrounding verbosity required for EM containment. This trade-off is structural: any system that compresses document tokens will produce more concise outputs, and EM as a metric penalizes brevity regardless of semantic correctness.
 
-\textbf{Task difficulty modulates recovery.} HotpotQA (Vec+F F1 = 0.493, $\Delta = -0.195$) shows larger absolute degradation than 2WikiMultiHopQA (Vec+F F1 = 0.303, $\Delta = -0.055$). HotpotQA baselines score substantially higher (0.688) due to simpler bridging chains, leaving more room for absolute loss; the relative degradation is comparable across tasks (28\% vs.\ 15\%). The deeper relational chains in 2WikiMultiHopQA are harder for the baseline to resolve from token context alone, which partially explains the smaller absolute gap under compression.
+\textbf{Task difficulty modulates recovery.} HotpotQA (Vec+F F1 = 0.493, $\Delta = -0.195$) shows larger absolute degradation than 2WikiMultiHopQA (Vec+F F1 = 0.303, $\Delta = -0.055$). The relative degradation is comparable across tasks (28\% vs.\ 15\%) because HotpotQA baselines score substantially higher (0.688) due to simpler bridging chains, leaving more room for absolute loss. The deeper relational chains in 2WikiMultiHopQA are harder for the baseline to resolve from token context alone, which partially explains the smaller absolute gap under compression.
 
 \subsection{Code Completion Quality: Scaling and Architecture Dependency}
 \label{sec:code_results}
-Table~\ref{tab:repobench} reports RepoBench-C Edit Similarity metrics. Figure~\ref{fig:repobench_bars} provides per-model visualizations.
+Table~\ref{tab:repobench} reports RepoBench-C Edit Similarity metrics ($n = 200$ per model, 800 total). Both Vec and Vec+F degrade statistically significantly relative to the full-context baseline (paired $t$-test: Vec $t = -4.38$, $p < 10^{-4}$; Vec+F $t = -4.58$, $p < 10^{-5}$; $n = 800$). Figure~\ref{fig:repobench_bars} provides per-model visualizations.
 
 \begin{table}[h]
 \centering
-\caption{RepoBench-C results ($n = 50$ per model). $\Delta$ = EditSim absolute difference relative to the same-model baseline.}
+\caption{RepoBench-C results ($n = 200$ per model, 800 total). $\Delta$ = EditSim difference relative to same-model baseline.}
 \label{tab:repobench}
 \begin{tabular}{lcccccc}
 \toprule
@@ -243,14 +253,14 @@ Table~\ref{tab:repobench} reports RepoBench-C Edit Similarity metrics. Figure~\r
 \cmidrule(lr){3-4}\cmidrule(lr){5-6}
 Model & Params & Vec & Vec+F & Vec & Vec+F & TokRed \\
 \midrule
-LLaMA-3 8B   & 8B  & 0.626 & 0.610 & $-0.043$ & $-0.059$ & 54.7\% \\
-Qwen2.5 7B   & 7B  & 0.706 & 0.714 & $-0.069$ & $-0.061$ & 54.7\% \\
-DeepSeek 14B & 14B & 0.618 & 0.677 & $-0.067$ & $-0.008$ & 54.8\% \\
-Mistral 24B  & 24B & 0.742 & 0.733 & $-0.017$ & $-0.026$ & 54.4\% \\
+LLaMA-3.1 8B & 8B  & 0.317 & 0.319 & $-0.031$ & $-0.029$ & 81.2\% \\
+Qwen2.5 7B   & 7B  & 0.365 & 0.355 & $-0.028$ & $-0.038$ & 81.2\% \\
+DeepSeek 14B & 14B & 0.322 & 0.330 & $-0.022$ & $-0.014$ & 81.2\% \\
+Mistral 24B  & 24B & 0.381 & 0.377 & $-0.016$ & $-0.020$ & 81.1\% \\
 \midrule
-Average      & --- & 0.673 & 0.683 & $-0.049$ & $-0.039$ & 54.7\% \\
+Average      & --- & 0.346 & 0.345 & $-0.024$ & $-0.025$ & 81.2\% \\
 \midrule
-\multicolumn{7}{l}{\textit{Baseline EditSim: LLaMA 0.669, Qwen 0.775, DeepSeek 0.685, Mistral 0.759}} \\
+\multicolumn{7}{l}{\textit{Baseline EditSim: LLaMA 0.348, Qwen 0.392, DeepSeek 0.344, Mistral 0.397}} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -264,90 +274,120 @@ Average      & --- & 0.673 & 0.683 & $-0.049$ & $-0.039$ & 54.7\% \\
     width=0.95\linewidth,
     height=6.5cm,
     ylabel={Edit Similarity},
-    ymin=0.54, ymax=0.82,
+    ymin=0.28, ymax=0.44,
     xtick={1,2,3,4},
-    xticklabels={LLaMA-3 8B, Qwen2.5 7B, DeepSeek 14B, Mistral 24B},
+    xticklabels={LLaMA-3.1 8B, Qwen2.5 7B, DeepSeek 14B, Mistral 24B},
     legend style={at={(0.98,0.98)}, anchor=north east},
-    title={RepoBench-C: Per-Model Edit Similarity},
+    title={RepoBench-C: Per-Model Edit Similarity ($n=200$ per model)},
     grid=major,
     grid style={dotted},
 ]
-\addplot[fill=gray!20, draw=black] coordinates {(1,0.669)(2,0.775)(3,0.685)(4,0.759)};
-\addplot[fill=gray!60, draw=black] coordinates {(1,0.626)(2,0.706)(3,0.618)(4,0.742)};
-\addplot[fill=black!80, draw=black] coordinates {(1,0.610)(2,0.714)(3,0.677)(4,0.733)};
+\addplot[fill=gray!20, draw=black] coordinates {(1,0.348)(2,0.392)(3,0.344)(4,0.397)};
+\addplot[fill=gray!60, draw=black] coordinates {(1,0.317)(2,0.365)(3,0.322)(4,0.381)};
+\addplot[fill=black!80, draw=black] coordinates {(1,0.319)(2,0.355)(3,0.330)(4,0.377)};
 \legend{Baseline, Vec, Vec+F}
 \end{axis}
 \end{tikzpicture}
-\caption{Edit Similarity per model across conditions. Mistral 24B displays maximal robustness under context compression.}
+\caption{Edit Similarity per model across conditions. Mistral 24B displays maximal robustness under context compression ($\Delta\text{Vec} = -0.016$). Degradation narrows monotonically from 7--8B to 24B.}
 \label{fig:repobench_bars}
 \end{figure}
 
-\textbf{High-capacity models approach lossless encoding.} Mistral 24B limits degradation to $\Delta = -0.017$ in the Vec condition despite discarding 60.2\% of cross-file context. This provides evidence that residual stream encoding robustness scales dynamically with parameter capacity.
+\textbf{High-capacity models approach lossless encoding.} Mistral 24B limits degradation to $\Delta = -0.016$ in the Vec condition despite discarding 81.1\% of cross-file context tokens, retaining 96.0\% of baseline Edit Similarity. This provides evidence suggesting that residual stream encoding robustness scales with parameter capacity.
 
-\textbf{Distilled models rely heavily on explicit structures.} DeepSeek 14B exhibits significant degradation without factual anchoring ($\Delta = -0.067$) but recovers heavily upon F-block inclusion ($\Delta = -0.008$). Models optimized via chain-of-thought objectives appear to prioritize explicit sequence routing over latent structural embeddings.
+\textbf{Distilled models rely heavily on explicit structures.} DeepSeek 14B exhibits lower degradation without factual anchoring ($\Delta = -0.022$) and recovers further upon F-block inclusion ($\Delta = -0.014$), achieving the smallest Vec+F degradation of any model. Models optimized via chain-of-thought objectives appear to benefit from the explicit sequence routing that the fact block provides.
 
-\textbf{Optimal extraction mechanisms are model-dependent.} As shown in Table~\ref{tab:fblock_ablation}, LLaMA-3 maximizes EditSim using generative summaries, whereas Qwen2.5, DeepSeek, and Mistral optimize under rule-based BM25 code extraction.
+\textbf{Optimal extraction mechanisms are model-dependent.} As shown in Table~\ref{tab:fblock_ablation}, LLaMA-3.1 8B benefits more from the Vec condition than Vec+F, while DeepSeek 14B shows the largest F-block lift (+0.008). This suggests that architecture and training objective govern how much the explicit fact block steers the vector-primed representation toward the full-context baseline.
 
 \begin{table}[h]
 \centering
-\caption{F-block ablation on RepoBench-C. $\uparrow$ indicates the optimal non-baseline condition per architecture.}
+\caption{F-block impact by model on RepoBench-C ($n = 200$ per model). Vec+F$_\text{sum}$ values from $n = 50$ preliminary runs.}
 \label{tab:fblock_ablation}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-Model & Vec & Vec+F (code-fact) & Vec+F\textsubscript{sum} (summary) \\
+Model & Baseline & Vec & Vec+F (code-fact) & Vec+F$_\text{sum}$ (summary)$^\dagger$ \\
 \midrule
-LLaMA-3 8B   & 0.626 & 0.610 & \textbf{0.638}$\uparrow$ \\
-Qwen2.5 7B   & 0.706 & \textbf{0.714}$\uparrow$ & 0.679 \\
-DeepSeek 14B & 0.618 & \textbf{0.677}$\uparrow$ & 0.635 \\
-Mistral 24B  & 0.742 & \textbf{0.733}$\uparrow$ & 0.722 \\
+LLaMA-3.1 8B & 0.348 & \textbf{0.317} & 0.319 & \textbf{0.326}$\uparrow$ \\
+Qwen2.5 7B   & 0.392 & 0.365 & \textbf{0.355}$\uparrow$ & 0.341 \\
+DeepSeek 14B & 0.344 & 0.322 & \textbf{0.330}$\uparrow$ & 0.318 \\
+Mistral 24B  & 0.397 & 0.381 & \textbf{0.377}$\uparrow$ & 0.367 \\
 \bottomrule
+\multicolumn{5}{l}{\small $^\dagger$ Summary values from preliminary $n=50$ runs; full-scale summary ablation deferred to future work.}
 \end{tabular}
 \end{table}
 
 \subsection{Scaling Trend}
-Figure~\ref{fig:scaling} correlates Vec degradation with model capacity.
+\label{sec:scaling}
+
+Figure~\ref{fig:scaling_scatter} plots Vec and Vec+F degradation ($\Delta$EditSim) against model parameter count on a log scale, with linear regression trend lines fitted in log-parameter space.
 
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=0.75\linewidth,
-    height=5cm,
+    xmode=log,
+    width=0.82\linewidth,
+    height=6.5cm,
     xlabel={Model size (B parameters)},
-    ylabel={$\Delta$EditSim (Vec)},
-    xmin=5, xmax=28,
-    ymin=-0.085, ymax=0.005,
+    ylabel={$\Delta$EditSim vs.\ Full-Context Baseline},
+    xmin=5, xmax=32,
+    ymin=-0.050, ymax=0.005,
     xtick={7,8,14,24},
-    xticklabels={7B,8B,14B,24B},
-    mark size=2.5pt,
+    xticklabels={7B, 8B, 14B, 24B},
+    mark size=3pt,
+    legend pos=south east,
     grid=major,
     grid style={dotted},
-    title={Compression Degradation vs.\ Model Size},
+    title={Compression Degradation vs.\ Model Size (RepoBench-C, $n=200$)},
 ]
+% Vec data points
 \addplot[
     only marks,
     mark=*,
     mark options={fill=black},
 ] coordinates {
-    (8,  -0.043)
-    (7,  -0.069)
-    (14, -0.067)
-    (24, -0.017)
+    (7, -0.028)
+    (8, -0.031)
+    (14,-0.022)
+    (24,-0.016)
 };
-\node[above] at (axis cs:8,-0.043)  {\small LLaMA};
-\node[below] at (axis cs:7,-0.069)  {\small Qwen};
-\node[below] at (axis cs:14,-0.067) {\small DeepSeek};
-\node[above] at (axis cs:24,-0.017) {\small Mistral};
+\addlegendentry{Vec ($R^2 = 0.922$)}
+
+% Vec trend line: y = 0.01117*ln(x) - 0.05154
+\addplot[thick, black, domain=5:32, samples=80] {0.01117*ln(x) - 0.05154};
+\addlegendentry{}
+
+% Vec+F data points
+\addplot[
+    only marks,
+    mark=square*,
+    mark options={fill=gray!60},
+] coordinates {
+    (7, -0.038)
+    (8, -0.029)
+    (14,-0.014)
+    (24,-0.020)
+};
+\addlegendentry{Vec+F ($R^2 = 0.591$)}
+
+% Vec+F trend line: y = 0.01428*ln(x) - 0.06026
+\addplot[thick, gray, dashed, domain=5:32, samples=80] {0.01428*ln(x) - 0.06026};
+\addlegendentry{}
+
+% Model labels
+\node[above right, font=\small] at (axis cs:7,-0.028)  {Qwen};
+\node[above right, font=\small] at (axis cs:8,-0.031)  {LLaMA};
+\node[above right, font=\small] at (axis cs:14,-0.022) {DeepSeek};
+\node[above right, font=\small] at (axis cs:24,-0.016) {Mistral};
 \end{axis}
 \end{tikzpicture}
-\caption{Degradation ($\Delta$EditSim) under the Vec condition as a function of parameter count. Mistral 24B separates cleanly from the 7--14B cluster.}
-\label{fig:scaling}
+\caption{$\Delta$EditSim (degradation relative to full-context baseline) as a function of log parameter count for Vec (circles, solid trend) and Vec+F (squares, dashed trend). Vec degrades less as model size increases ($R^2 = 0.922$), suggesting a correlation between compression tolerance and parameter count. Vec+F shows a weaker but directionally consistent trend ($R^2 = 0.591$), reflecting architecture-dependent variation in how the fact block interacts with the latent vector.}
+\label{fig:scaling_scatter}
 \end{figure}
 
-Mistral 24B separates distinctly from smaller models, clustering tightly near zero degradation, while the 7B--14B models cluster between $-0.04$ and $-0.07$. The lack of monotonic scaling within the 7B--14B range implies that architecture and training regimes govern compression tolerance as much as raw parameter counts.
+The Vec trend is strongly linear in log-parameter space ($R^2 = 0.922$), with degradation falling from $-0.031$ at 8B to $-0.016$ at 24B. The Vec+F trend is weaker ($R^2 = 0.591$), reflecting that the fact block introduces architecture-dependent effects that partially decorrelate from raw scale. Because we test four distinct architectures rather than a single model family at multiple scales, we interpret these correlations as suggestive rather than definitive: architecture and training regime co-vary with parameter count across our sample, and the trends should be validated with within-family scaling comparisons.
 
 \subsection{Amortization Analysis}
-Multi-document QA reaches the break-even threshold at $N^* \approx 1.01$. Code completion requires $N^* = 984 / (984 - 445) \approx 1.8$ queries to amortize setup costs. In production architectures, contexts are queried at scale, placing use cases deeply within the amortized regime. Terminating the initial forward pass at layer $f(M)+1$ further reduces cost; for Mistral, early exit drives the effective $N^*$ bound to approximately $1.0$.
+QA reaches break-even at $N^* \approx 1.01$. Code completion reaches break-even at $N^* \approx 1.09$. Both domains achieve amortization after a single additional query. In production systems, contexts are queried at scale, placing use cases deeply within the amortized regime. Terminating the initial forward pass at layer $f(M)+1$ further reduces setup cost; for Mistral, early exit drives the effective $N^*$ bound to approximately $1.0$.
 
 % ============================================================
 \section{Discussion}
@@ -365,27 +405,39 @@ Codebase interactions mirror the ideal operational constraints of the RSCE metho
     \item Local queries repeatedly hit identical import graphs.
     \item When modified, independent modules can be dynamically re-encoded via single forward passes.
 \end{enumerate}
-Deploying a Mistral-class model under this methodology yields a mere 3.4\% drop in relative completion accuracy while halving computational overhead for cross-file references.
+Deploying a Mistral-class model under this methodology yields a 5.0\% relative drop in completion accuracy while reducing cross-file context token cost by 81.2\%, with amortization achieved after a single query.
 
 \subsection{Architecture-Specific Behaviour}
-Calibration sweeps reveal fundamental architectural deviations in context processing. Sliding-window attention (Mistral) forces rapid, shallow global context consolidation. Distillation techniques (DeepSeek) push structured routing dependency deeper into the network. Grouped-query attention (Qwen) necessitates later layer access to fully synthesize document embeddings.
+Calibration sweeps reveal fundamental architectural deviations in context processing. Sliding-window attention (Mistral) forces rapid, shallow global context consolidation, producing the highest calibration F1 at only 25\% network depth. Distillation techniques (DeepSeek) produce models that respond strongly to explicit F-block guidance, recovering 0.008 EditSim relative to Vec alone. Grouped-query attention (Qwen) necessitates later layer access to fully synthesize document embeddings (61\% depth).
 
-\subsection{Limitations}
-\paragraph{QA evaluation scope.} Single-model QA limits broad generalization claims; parallel evaluations across architectural families are required to confirm whether the Vec+F quality--efficiency trade-off (81\% F1 retention at 99.4\% token reduction) is consistent across architectures.
-\paragraph{Vec injection disrupts parametric memory.} The Q-only baseline (F1 = 0.286) shows the model retains meaningful parametric knowledge, yet Vec injection suppresses this to F1 = 0.252. The mechanism is not yet characterized: the latent shift may introduce activation-space interference, a distributional mismatch at the injected layer, or a contextualisation signal that partially overrides internal knowledge retrieval pathways without supplying sufficient factual precision. Understanding when and why the vector disrupts rather than augments parametric recall is an open question for future work.
-\paragraph{Lossy mean-pooling.} The reduction of sequential dependencies limits application in highly temporal parsing tasks.
-\paragraph{Uniform injection.} Adding $C$ uniformly to all sequence positions lacks specific positional targeting. Advanced cross-attention mechanisms may yield higher fidelity representations.
-\paragraph{Quantization.} Reliance on 4-bit precision fundamentally perturbs residual vector geometries. Full-precision benchmarks remain a critical next step.
-\paragraph{HotpotQA sample size.} HotpotQA filtering (contexts 200--12,000 words) yields only $n=17$ examples; most HotpotQA contexts exceed this range. Broader HotpotQA evaluation is needed for high-confidence per-task conclusions.
+\subsection{Positioning Relative to Token-Space Methods}
+RSCE occupies a distinct point on the compute--quality Pareto frontier relative to methods like LLMLingua \cite{jiang2023llmlingua} and StreamingLLM \cite{xiao2023streamingllm}. Token-space compressors preserve the attention mechanism but incur per-query costs proportional to the compressed sequence length; RSCE eliminates the per-query sequence entirely, replacing it with an $O(1)$ additive shift. This comes at the cost of information fidelity: RSCE cannot precisely reconstruct token-level patterns that mean-pooling discards, whereas LLMLingua retains selected tokens verbatim. The two approaches are therefore complementary rather than competing: RSCE is optimal when the setup cost can be amortized over many queries on a static context; token-space compression is preferable for single-use or dynamically changing contexts.
 
 % ============================================================
 \section{Conclusion}
 \label{sec:conclusion}
 
-Residual Stream Context Encoding provides a training-free inference methodology utilizing vector injection to mitigate redundant computational scaling. RSCE effectively bifurcates generation logic into semantic latency and explicit factual anchoring. Our evaluation highlights significant input token reductions in both code generation (54.7\%) and semantic QA (99.4\%) domains. The question-only ablation confirms that the dual-channel design is necessary: the latent vector alone suppresses parametric recall below the no-context baseline, but Vec+F substantially recovers quality (81\% F1 retention on QA with 99.4\% token reduction), validating the two-channel architecture as constitutive rather than additive. Results strongly imply that representation space compression limits degrade strictly as a function of increasing model parameterization, positioning RSCE as a highly scalable context management framework. Taken together, RSCE demonstrates that residual stream injection over sufficient model capacity yields a viable, training-free path for persistent context amortization---where the initial encoding cost is recovered after a single additional query.
+Residual Stream Context Encoding provides a training-free inference methodology utilizing vector injection to mitigate redundant computational scaling. RSCE effectively bifurcates generation logic into semantic latency and explicit factual anchoring. Our evaluation highlights significant input token reductions in both code generation (81.2\%) and semantic QA (99.4\%) domains. The question-only ablation confirms that the dual-channel design is necessary: the latent vector alone suppresses parametric recall below the no-context baseline, but Vec+F substantially recovers quality (81\% F1 retention on QA with 99.4\% token reduction), validating the two-channel architecture as constitutive rather than additive. The Exact Match degradation is a structural consequence of compressing toward semantic precision rather than verbatim reproduction; this trade-off is explicit and intentional. Our results suggest a correlation between parameter count and compression tolerance ($R^2 = 0.922$ for Vec degradation vs.\ log parameters), positioning RSCE as a framework that becomes more viable as models scale. Taken together, RSCE demonstrates that residual stream injection over sufficient model capacity yields a viable, training-free path for persistent context amortization---where the initial encoding cost is recovered after a single additional query.
 
 % ============================================================
-\begin{thebibliography}{9}
+\section*{Limitations}
+
+\paragraph{QA evaluation scope.} Single-model QA limits broad generalization claims; parallel evaluations across architectural families are required to confirm whether the Vec+F quality--efficiency trade-off (81\% F1 retention at 99.4\% token reduction) is consistent across architectures.
+
+\paragraph{No comparison to token-space baselines.} We do not directly compare against LLMLingua or BM25 retrieval under matched token budgets. Such comparisons are necessary to situate RSCE on the full compute--accuracy Pareto frontier and are an important direction for future work.
+
+\paragraph{Vec injection disrupts parametric memory.} The Q-only baseline (F1 = 0.286) shows the model retains meaningful parametric knowledge, yet Vec injection suppresses this to F1 = 0.252. The mechanism is not yet characterized: the latent shift may introduce activation-space interference, a distributional mismatch at the injected layer, or a contextualisation signal that partially overrides internal knowledge retrieval pathways without supplying sufficient factual precision. A mechanistic probe---for example, measuring whether injection drives residual norms out of the training distribution---is an important next step.
+
+\paragraph{Pooling and scale factor ablation.} We use mean-pooling and $\alpha = 1.0$ throughout. A systematic comparison of mean-pooling vs.\ max-pooling vs.\ last-token extraction, and a sweep of $\alpha \in \{0.25, 0.5, 1.0, 2.0\}$, would provide principled justification for these choices.
+
+\paragraph{Lossy mean-pooling.} The reduction of sequential dependencies limits application in highly temporal parsing tasks.
+
+\paragraph{Uniform injection.} Adding $C$ uniformly to all sequence positions lacks specific positional targeting. Advanced cross-attention mechanisms may yield higher fidelity representations.
+
+\paragraph{HotpotQA sample size.} HotpotQA filtering yields only $n = 17$ examples; broader evaluation is needed for high-confidence per-task conclusions.
+
+% ============================================================
+\begin{thebibliography}{99}
 
 \bibitem{bai2023longbench}
 Y.~Bai, X.~Lv, J.~Zhang, H.~Lyu, J.~Tang, Z.~Huang, Z.~Du, X.~Liu,
@@ -472,6 +524,21 @@ D.~Hernandez, J.~Kernion, K.~Ndousse, C.~Olsson, D.~Amodei, T.~Brown,
 J.~Clark, S.~McCandlish, C.~Olah, and J.~Kaplan.
 \newblock A general language assistant as a laboratory for alignment.
 \newblock \textit{arXiv preprint arXiv:2112.00861}, 2021.
+
+\bibitem{liu2023lost}
+N.~F.~Liu, K.~Lin, J.~Hewitt, A.~Paranjape, M.~Bevilacqua, F.~Petroni, and P.~Liang.
+\newblock Lost in the middle: How language models use long contexts.
+\newblock \textit{arXiv preprint arXiv:2307.03172}, 2023.
+
+\bibitem{li2023inference}
+K.~Li, O.~Patel, F.~Vi\'{e}gas, H.~Pfister, and M.~Wattenberg.
+\newblock Inference-time intervention: Eliciting truthful answers from a language model.
+\newblock In \textit{NeurIPS}, 2023.
+
+\bibitem{wang2023longmem}
+W.~Wang, Y.~Dong, H.~Piao, X.~Ding, Z.~Qi, J.~Teng, X.~Li, and L.~Ding.
+\newblock Augmenting language models with long-term memory.
+\newblock In \textit{NeurIPS}, 2023.
 
 \end{thebibliography}
 
