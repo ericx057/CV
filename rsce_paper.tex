@@ -350,11 +350,11 @@ Figure~\ref{fig:scaling_scatter} plots Vec and Vec+F degradation ($\Delta$EditSi
     (14,-0.022)
     (24,-0.016)
 };
-\addlegendentry{Vec ($R^2 = 0.922$)}
+\addlegendentry{Vec}
 
-% Vec trend line: y = 0.01117*ln(x) - 0.05154
+% Vec trend line: y = 0.01117*ln(x) - 0.05154, R^2 = 0.922
 \addplot[thick, black, domain=5:32, samples=80] {0.01117*ln(x) - 0.05154};
-\addlegendentry{}
+\addlegendentry{Vec trend ($R^2 = 0.922$)}
 
 % Vec+F data points
 \addplot[
@@ -367,11 +367,7 @@ Figure~\ref{fig:scaling_scatter} plots Vec and Vec+F degradation ($\Delta$EditSi
     (14,-0.014)
     (24,-0.020)
 };
-\addlegendentry{Vec+F ($R^2 = 0.591$)}
-
-% Vec+F trend line: y = 0.01428*ln(x) - 0.06026
-\addplot[thick, gray, dashed, domain=5:32, samples=80] {0.01428*ln(x) - 0.06026};
-\addlegendentry{}
+\addlegendentry{Vec+F}
 
 % Model labels
 \node[above right, font=\small] at (axis cs:7,-0.028)  {Qwen};
@@ -380,11 +376,11 @@ Figure~\ref{fig:scaling_scatter} plots Vec and Vec+F degradation ($\Delta$EditSi
 \node[above right, font=\small] at (axis cs:24,-0.016) {Mistral};
 \end{axis}
 \end{tikzpicture}
-\caption{$\Delta$EditSim (degradation relative to full-context baseline) as a function of log parameter count for Vec (circles, solid trend) and Vec+F (squares, dashed trend). Vec degrades less as model size increases ($R^2 = 0.922$), suggesting a correlation between compression tolerance and parameter count. Vec+F shows a weaker but directionally consistent trend ($R^2 = 0.591$), reflecting architecture-dependent variation in how the fact block interacts with the latent vector.}
+\caption{$\Delta$EditSim (degradation relative to full-context baseline) as a function of log parameter count. Vec (circles) shows a strong linear trend in log-parameter space ($R^2 = 0.922$), suggesting a correlation between model scale and compression tolerance. Vec+F (squares) is shown without a trend line as architecture-dependent variation in fact block effectiveness reduces the fit.}
 \label{fig:scaling_scatter}
 \end{figure}
 
-The Vec trend is strongly linear in log-parameter space ($R^2 = 0.922$), with degradation falling from $-0.031$ at 8B to $-0.016$ at 24B. The Vec+F trend is weaker ($R^2 = 0.591$), reflecting that the fact block introduces architecture-dependent effects that partially decorrelate from raw scale. Because we test four distinct architectures rather than a single model family at multiple scales, we interpret these correlations as suggestive rather than definitive: architecture and training regime co-vary with parameter count across our sample, and the trends should be validated with within-family scaling comparisons.
+Vec degradation is strongly linear in log-parameter space ($R^2 = 0.922$), falling from $-0.031$ at 8B to $-0.016$ at 24B. Vec+F does not exhibit a comparably clean trend, reflecting that the fact block introduces architecture-dependent effects that partially decorrelate from raw scale. Because we test four distinct architectures rather than a single model family at multiple scales, the Vec correlation is suggestive rather than definitive: architecture and training regime co-vary with parameter count, and the relationship should be validated with within-family scaling comparisons.
 
 \subsection{Amortization Analysis}
 QA reaches break-even at $N^* \approx 1.01$. Code completion reaches break-even at $N^* \approx 1.09$. Both domains achieve amortization after a single additional query. In production systems, contexts are queried at scale, placing use cases deeply within the amortized regime. Terminating the initial forward pass at layer $f(M)+1$ further reduces setup cost; for Mistral, early exit drives the effective $N^*$ bound to approximately $1.0$.
