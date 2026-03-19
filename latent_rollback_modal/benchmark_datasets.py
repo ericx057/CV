@@ -121,6 +121,11 @@ def _load_task(task: str, seed: int = 42, cache: bool = True) -> list[BenchmarkE
         return _load_from_hf(task, cache_path)
     except Exception as exc:
         console.print(f"  [yellow]HF load failed for {task}: {exc}[/yellow]")
+        if task in {"hotpotqa", "2wikimqa"}:
+            raise RuntimeError(
+                f"Failed to load real LongBench data for {task}. "
+                "Fallback examples are disabled for benchmark runs."
+            ) from exc
         console.print("  [yellow]Falling back to hardcoded examples.[/yellow]")
         return _hardcoded_fallback(task)
 
@@ -130,7 +135,12 @@ def _load_from_hf(task: str, cache_path: Path) -> list[BenchmarkExample]:
     from datasets import load_dataset  # type: ignore
 
     console.print(f"  Downloading {LONGBENCH_REPO} / {task} from HuggingFace...")
-    ds = load_dataset(LONGBENCH_REPO, task, split="test")
+    ds = load_dataset(
+        LONGBENCH_REPO,
+        task,
+        split="test",
+        trust_remote_code=True,
+    )
 
     examples = []
     for i, row in enumerate(ds):

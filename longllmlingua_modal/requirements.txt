@@ -1,0 +1,11 @@
+torch>=2.3.0
+transformers>=4.40.0
+datasets>=2.19.0,<4.0.0
+accelerate>=0.29.0
+numpy>=1.24.0
+rich>=13.0.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
+modal>=0.73.0
+llmlingua>=0.2.2
+rank-bm25>=0.2.2

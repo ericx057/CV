@@ -128,7 +128,7 @@ def _format_in_file(example: dict) -> str:
 
 def load_repobench(
     split: str = "cross_file_first",
-    level: str = "2k",
+    level: str | None = "2k",
     n: int = 50,
     seed: int = 42,
     language: str = "python",
@@ -140,8 +140,8 @@ def load_repobench(
     ----------
     split : "cross_file_first" | "cross_file_random" | "in_file"
         cross_file_first is hardest (no prior in-file hints for the imported symbol).
-    level : "2k" | "4k" | "8k" | ...
-        Token budget bucket. Use "2k" for 4k-context models.
+    level : "2k" | "4k" | "8k" | "all" | None
+        Token budget bucket. Use "all" or None to disable level filtering.
     n : int
         Number of examples to load.
     language : "python" | "java"
@@ -167,11 +167,14 @@ def load_repobench(
     except Exception as exc:
         raise RuntimeError(f"Failed to load RepoBench: {exc}") from exc
 
-    # Filter to requested level
-    ds_level = ds.filter(lambda x: x["level"] == level)
-    if len(ds_level) == 0:
-        console.print(f"  [yellow]Warning: no examples found at level={level}, using all levels[/yellow]")
+    # Filter to requested level unless explicitly disabled
+    if level in (None, "", "all"):
         ds_level = ds
+    else:
+        ds_level = ds.filter(lambda x: x["level"] == level)
+        if len(ds_level) == 0:
+            console.print(f"  [yellow]Warning: no examples found at level={level}, using all levels[/yellow]")
+            ds_level = ds
 
     # Deterministic shuffle and subsample
     ds_level = ds_level.shuffle(seed=seed)
