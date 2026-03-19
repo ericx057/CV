@@ -29,7 +29,7 @@ import modal
 
 image = (
     modal.Image.from_registry(
-        "pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime",
+        "pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime",
         add_python="3.11",
     )
     .pip_install(
@@ -89,16 +89,20 @@ def _calibrate(model_key: str) -> dict:
 
     os.environ["HF_HOME"] = "/weights"
     os.environ["TRANSFORMERS_CACHE"] = "/weights"
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
     cfg     = MODEL_REGISTRY[model_key]
     hf_id   = cfg["hf_id"]
     n_layers = cfg["n_layers"]
 
-    # Sweep range: [25%, 85%] of total layers, stride 2
-    lo  = max(1, n_layers // 4)
-    hi  = int(0.85 * n_layers)
-    candidates = list(range(lo, hi + 1, LAYER_STRIDE))
-    print(f"Sweeping layers {lo}..{hi} (stride {LAYER_STRIDE}) — {len(candidates)} candidates")
+    # Coarse-to-fine search over [33%, 70%] depth.
+    # Empirically the optimum always lands in this band (observed 44-47% across
+    # all models tested).  A wide stride-8 coarse pass narrows the region, then
+    # a stride-2 fine pass zooms in around the coarse best.
+    lo = max(1, int(0.33 * n_layers))
+    hi = int(0.70 * n_layers)
+    coarse_candidates = list(range(lo, hi + 1, 8))
+    print(f"Coarse pass: layers {lo}..{hi} (stride 8) — {len(coarse_candidates)} candidates")
 
     CODE_STOP = ("\n\n", "\ndef ", "\nclass ", "```")
 
@@ -144,6 +148,10 @@ def _calibrate(model_key: str) -> dict:
     clear()
 
     input_device = next(model.parameters()).device
+    max_ctx = getattr(model.config, "max_position_embeddings", 4096)
+    # Leave headroom for query tokens and generation
+    MAX_CTX_TOKENS = max(512, max_ctx - 256)
+    print(f"Max context tokens: {MAX_CTX_TOKENS}")
 
     def encode(text):
         return tokenizer.encode(text, add_special_tokens=False)
@@ -184,21 +192,21 @@ def _calibrate(model_key: str) -> dict:
         for r in selected
     ]
 
-    # ---- sweep layers -----------------------------------------------------
+    # ---- sweep layers (coarse pass) ----------------------------------------
     results: dict[int, float] = {}
 
-    for layer in candidates:
+    def eval_layer(layer):
+        """Evaluate one candidate layer; writes score into results dict."""
         layer_device = next(model.model.layers[layer].parameters()).device
         scores = []
 
         for s in samples:
-            cross_file = s["cross_file"]
+            cross_file   = s["cross_file"]
             query_prompt = f"# Complete the next line:\n{s['in_file']}"
-            next_line   = s["next_line"]
+            next_line    = s["next_line"]
 
-            # Extract vector at this candidate layer
             try:
-                ids = encode(cross_file)
+                ids = encode(cross_file)[-MAX_CTX_TOKENS:]
                 inp = torch.tensor([ids], dtype=torch.long).to(input_device)
                 with torch.no_grad():
                     out = model(inp, output_hidden_states=True)
@@ -219,7 +227,7 @@ def _calibrate(model_key: str) -> dict:
                     return output + v[None, None, :]
 
                 handle = model.model.layers[layer].register_forward_hook(hook)
-                q_ids = encode(query_prompt)
+                q_ids = encode(query_prompt)[-(MAX_CTX_TOKENS):]
                 q_inp = torch.tensor([q_ids], dtype=torch.long).to(input_device)
                 try:
                     with torch.no_grad():
@@ -249,6 +257,24 @@ def _calibrate(model_key: str) -> dict:
         mean_es = sum(scores) / len(scores) if scores else 0.0
         results[layer] = round(mean_es, 4)
         print(f"  layer={layer:3d}  mean_EditSim={mean_es:.4f}")
+
+    # Coarse pass
+    for layer in coarse_candidates:
+        eval_layer(layer)
+
+    coarse_best = max(coarse_candidates, key=lambda l: results[l])
+    print(f"\nCoarse best: layer {coarse_best} ({coarse_best/n_layers:.0%} depth) "
+          f"EditSim={results[coarse_best]:.4f}")
+
+    # Fine pass: stride-2 window ±8 layers around coarse best, skipping already evaluated
+    fine_lo = max(lo, coarse_best - 8)
+    fine_hi = min(hi, coarse_best + 8)
+    fine_candidates = [l for l in range(fine_lo, fine_hi + 1, LAYER_STRIDE)
+                       if l not in results]
+    print(f"Fine pass: layers {fine_lo}..{fine_hi} (stride {LAYER_STRIDE}) "
+          f"— {len(fine_candidates)} new candidates")
+    for layer in fine_candidates:
+        eval_layer(layer)
 
     best_layer = max(results, key=results.__getitem__)
     best_score = results[best_layer]

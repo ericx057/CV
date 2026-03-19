@@ -27,7 +27,7 @@ import modal
 
 image = (
     modal.Image.from_registry(
-        "pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime",
+        "pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime",
         add_python="3.11",
     )
     .pip_install(
@@ -74,11 +74,11 @@ MODEL_REGISTRY: dict[str, dict] = {
     },
     "deepseek-67b": {
         "hf_id": "deepseek-ai/deepseek-llm-67b-chat",
-        "injection_layer": 57,   # 60% of 95 layers
+        "injection_layer": 45,   # calibrated: 47% of 95 layers
     },
     "llama31-70b": {
         "hf_id": "meta-llama/Meta-Llama-3.1-70B-Instruct",
-        "injection_layer": 35,   # 44% of 80 layers (same depth % as 8B)
+        "injection_layer": 50,   # calibrated: 62% of 80 layers
     },
 }
 
@@ -91,10 +91,11 @@ MAX_NEW_TOKENS = 50
 # Shared benchmark logic (inlined per function to avoid import issues)
 # ---------------------------------------------------------------------------
 
-CHECKPOINT_EVERY = 10  # flush partial CSV to volume every N examples
+CHECKPOINT_EVERY = 20  # flush partial CSV to volume every N examples
 
 
-def _run_benchmark(model_key: str, checkpoint_path: str | None = None) -> str:
+def _run_benchmark(model_key: str, checkpoint_path: str | None = None,
+                   commit_fn=None) -> str:
     import gc
     import random
     import torch
@@ -165,6 +166,7 @@ def _run_benchmark(model_key: str, checkpoint_path: str | None = None) -> str:
     import os
     os.environ["HF_HOME"] = "/weights"
     os.environ["TRANSFORMERS_CACHE"] = "/weights"
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
     for attempt in range(10):
         try:
@@ -201,6 +203,10 @@ def _run_benchmark(model_key: str, checkpoint_path: str | None = None) -> str:
     layer_device = next(model.model.layers[layer].parameters()).device
     print(f"  input_device={input_device}  layer_device={layer_device}")
 
+    max_ctx = getattr(model.config, "max_position_embeddings", 4096)
+    MAX_CTX_TOKENS = max(512, max_ctx - 256)
+    print(f"  max_ctx_tokens={MAX_CTX_TOKENS}")
+
     def encode(text):
         return tokenizer.encode(text, add_special_tokens=False)
 
@@ -222,7 +228,7 @@ def _run_benchmark(model_key: str, checkpoint_path: str | None = None) -> str:
         return new_ids
 
     def extract_vector(text: str) -> tuple[torch.Tensor, int]:
-        ids = encode(text)
+        ids = encode(text)[-MAX_CTX_TOKENS:]
         inp = torch.tensor([ids], dtype=torch.long).to(input_device)
         with torch.no_grad():
             out = model(inp, output_hidden_states=True)
@@ -285,6 +291,9 @@ def _run_benchmark(model_key: str, checkpoint_path: str | None = None) -> str:
                     _w.writeheader()
                     _w.writerows(results)
                 print(f"  Checkpoint saved: {len(results)} rows")
+                if commit_fn is not None:
+                    commit_fn()
+                    print(f"  Volume committed.")
             except Exception as _e:
                 print(f"  Checkpoint save failed: {_e}")
 
@@ -384,7 +393,7 @@ results_vol = modal.Volume.from_name("rsce-repobench-results", create_if_missing
 
 SMALL_MODELS = {"llama3-8b", "qwen25-7b"}        # 1x H100 (~7-8B bfloat16)
 LARGE_MODELS  = {"deepseek-14b", "mistral-24b", "qwen25-32b"}  # 2x H100 (~14-32B)
-XL_MODELS     = {"deepseek-67b", "llama33-70b"}  # 4x H100 (~67-70B bfloat16)
+XL_MODELS     = {"deepseek-67b", "llama31-70b"}  # 4x H100 (~67-70B bfloat16)
 
 
 @app.function(gpu="H100", memory=81920, timeout=7200,
@@ -428,7 +437,8 @@ def run_model_xl(model_key: str) -> None:
     """4x H100 — for 67-70B models."""
     import os
     checkpoint = f"/results/repobench_{model_key}_partial.csv"
-    csv_data = _run_benchmark(model_key, checkpoint_path=checkpoint)
+    csv_data = _run_benchmark(model_key, checkpoint_path=checkpoint,
+                              commit_fn=results_vol.commit)
     out_path = f"/results/repobench_{model_key}.csv"
     with open(out_path, "w") as f:
         f.write(csv_data)
@@ -448,16 +458,20 @@ def main(model_key: str = ""):
     out_dir.mkdir(exist_ok=True)
 
     keys = [model_key] if model_key else list(MODEL_REGISTRY.keys())
-    print(f"Spawning independently (2x H100 each): {keys}")
+    print(f"Spawning independently: {keys}")
     print("Each model is isolated — cancelling one will NOT affect others.")
     print()
 
     # Spawn each model as a fully independent function call.
-    # Small models (7-8B) get 1x H100; large models get 2x H100.
-    handles = {
-        k: (run_model_small if k in SMALL_MODELS else run_model).spawn(k)
-        for k in keys
-    }
+    # Small (7-8B) -> 1x H100, Large (14-32B) -> 2x H100, XL (67-70B) -> 4x H100.
+    def _dispatch(k):
+        if k in SMALL_MODELS:
+            return run_model_small
+        if k in XL_MODELS:
+            return run_model_xl
+        return run_model
+
+    handles = {k: _dispatch(k).spawn(k) for k in keys}
 
     print("All spawned. Waiting for results...")
     for k, handle in handles.items():
