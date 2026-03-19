@@ -1,0 +1,25 @@
+{
+  "benchmark": "longbench",
+  "tasks": [
+    "hotpotqa",
+    "2wikimqa"
+  ],
+  "total_goal": 4,
+  "n_per_task": 2,
+  "models": [
+    "qwen25-7b"
+  ],
+  "runs": [
+    {
+      "model_key": "qwen25-7b",
+      "status": "ok",
+      "record_count": 4
+    }
+  ],
+  "example_ids": [
+    "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+    "3dd1ade26fd583844dd2af051d61eb20856ccc8e23abae59",
+    "ddd046530f4979511397f82fe5391d0a646c0aa18225a98e",
+    "57543e0892f90733bf97dc270cdb36eb9bf8e2230940bcb9"
+  ]
+}

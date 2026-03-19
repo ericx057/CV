@@ -1,0 +1,31 @@
+model_key,model_hf_id,task,example_id,ratio_name,compressor_model,original_input_tokens,compressed_input_tokens,output_tokens,input_token_reduction,exact_match,f1,prediction,best_answer,elapsed_s,status,error_type,error_message,compression_meta
+qwen25-7b,Qwen/Qwen2.5-7B-Instruct,hotpotqa,670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984,4x,NousResearch/Llama-2-7b-hf,5202,5202,0,0.0,False,0.0,,,0.0,error,RuntimeError,"LongLLMLingua compression failed after retries: primary_split_docs: ValueError: too many values to unpack (expected 2) | relaxed_split_docs: ValueError: too many values to unpack (expected 2) | minimal_split_docs: ValueError: too many values to unpack (expected 2) | primary_merged_context: ValueError: too many values to unpack (expected 2) | relaxed_merged_context: ValueError: too many values to unpack (expected 2) | minimal_merged_context: ValueError: too many values to unpack (expected 2)
+Last traceback:
+minimal_merged_context: ValueError: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File ""/root/longllmlingua_modal/benchmark_longbench.py"", line 142, in _compress_with_fallbacks
+    result = compressor.compress_prompt(candidate_docs, **normalized)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/usr/local/lib/python3.12/site-packages/llmlingua/prompt_compressor.py"", line 682, in compress_prompt
+    context = self.iterative_compress_prompt(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/usr/local/lib/python3.12/site-packages/llmlingua/prompt_compressor.py"", line 1659, in iterative_compress_prompt
+    for k, v in past_key_values
+        ^^^^
+ValueError: too many values to unpack (expected 2)
+","{""kwargs"": {""rate"": 0.25}, ""origin_tokens"": null, ""compressed_tokens"": null, ""ratio"": null, ""attempt_label"": null, ""input_doc_count"": null, ""used_merged_context"": false}"
+qwen25-7b,Qwen/Qwen2.5-7B-Instruct,2wikimqa,ddd046530f4979511397f82fe5391d0a646c0aa18225a98e,4x,NousResearch/Llama-2-7b-hf,5029,5029,0,0.0,False,0.0,,,0.0,error,RuntimeError,"LongLLMLingua compression failed after retries: primary_split_docs: ValueError: too many values to unpack (expected 2) | relaxed_split_docs: ValueError: too many values to unpack (expected 2) | minimal_split_docs: ValueError: too many values to unpack (expected 2) | primary_merged_context: ValueError: too many values to unpack (expected 2) | relaxed_merged_context: ValueError: too many values to unpack (expected 2) | minimal_merged_context: ValueError: too many values to unpack (expected 2)
+Last traceback:
+minimal_merged_context: ValueError: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File ""/root/longllmlingua_modal/benchmark_longbench.py"", line 142, in _compress_with_fallbacks
+    result = compressor.compress_prompt(candidate_docs, **normalized)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/usr/local/lib/python3.12/site-packages/llmlingua/prompt_compressor.py"", line 682, in compress_prompt
+    context = self.iterative_compress_prompt(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/usr/local/lib/python3.12/site-packages/llmlingua/prompt_compressor.py"", line 1659, in iterative_compress_prompt
+    for k, v in past_key_values
+        ^^^^
+ValueError: too many values to unpack (expected 2)
+","{""kwargs"": {""rate"": 0.25}, ""origin_tokens"": null, ""compressed_tokens"": null, ""ratio"": null, ""attempt_label"": null, ""input_doc_count"": null, ""used_merged_context"": false}"

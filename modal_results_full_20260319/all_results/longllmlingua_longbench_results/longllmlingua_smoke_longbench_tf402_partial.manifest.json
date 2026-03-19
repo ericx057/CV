@@ -1,0 +1,24 @@
+{
+  "run_id": "longllmlingua_smoke_longbench_tf402_partial",
+  "benchmark": "longbench",
+  "total_records": 2,
+  "success_records": 2,
+  "ok_records": 2,
+  "fallback_records": 0,
+  "error_records": 0,
+  "status_counts": {
+    "ok": 2
+  },
+  "error_type_counts": {},
+  "model_keys": [
+    "qwen25-7b"
+  ],
+  "conditions": [
+    "4x"
+  ],
+  "example_ids": [
+    "670498f9d7fd2582c5791cad2fe212f580d316fa49a8a984",
+    "ddd046530f4979511397f82fe5391d0a646c0aa18225a98e"
+  ],
+  "extra": {}
+}
