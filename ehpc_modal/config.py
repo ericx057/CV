@@ -5,7 +5,7 @@ from pathlib import Path
 
 from latent_rollback_modal.config import MODEL_MATRIX, runtime_paths
 
-DEFAULT_GPU = "A100-80GB"
+DEFAULT_GPU = os.environ.get("EHPC_MODAL_GPU", "A100-80GB:4")
 DEFAULT_FUNCTION_TIMEOUT_SECONDS = 24 * 60 * 60
 DEFAULT_STARTUP_TIMEOUT_SECONDS = 60 * 60
 DEFAULT_PILOT_PROBES = 50
@@ -13,9 +13,11 @@ DEFAULT_TOP_K_HEADS = 8
 DEFAULT_POOL_KERNEL = 3
 DEFAULT_PILOT_TARGET_LENGTH = 2000
 DEFAULT_MAX_ATTENTION_GB = 8.0
+DEFAULT_HF_SECRET_NAME = os.environ.get("MODAL_HF_SECRET_NAME", "huggingface")
 
 MODEL_ALIASES = {
     "llama": "llama3-8b",
+    "llama31": "llama3.1-8b",
     "qwen": "qwen25-7b",
     "deepseek": "deepseek-14b",
     "mistral": "mistral-24b",

@@ -175,6 +175,18 @@ MODEL_MATRIX: dict[str, dict] = {
         "family": "llama",
         "note": "Modal Torch backend",
     },
+    "llama3.1-8b": {
+        "hf_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "size_gb": 16.0,
+        "family": "llama",
+        "note": "Modal Torch backend (Llama 3.1 config)",
+    },
+    "llama3.1-70b": {
+        "hf_id": "meta-llama/Llama-3.1-70B-Instruct",
+        "size_gb": 140.0,
+        "family": "llama",
+        "note": "Modal Torch backend (multi-GPU sharded)",
+    },
     "qwen25-7b": {
         "hf_id": "Qwen/Qwen2.5-7B-Instruct",
         "size_gb": 15.0,

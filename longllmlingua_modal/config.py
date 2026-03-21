@@ -5,11 +5,12 @@ from pathlib import Path
 
 from latent_rollback_modal.config import MODEL_MATRIX, runtime_paths
 
-DEFAULT_GPU = "A100-80GB"
+DEFAULT_GPU = os.environ.get("LONGLLMLINGUA_MODAL_GPU", "A100-80GB:4")
 DEFAULT_FUNCTION_TIMEOUT_SECONDS = 24 * 60 * 60
 DEFAULT_STARTUP_TIMEOUT_SECONDS = 60 * 60
 DEFAULT_COMPRESSOR_MODEL = "NousResearch/Llama-2-7b-hf"
 DEFAULT_COMPRESSOR_DEVICE = "cuda"
+DEFAULT_HF_SECRET_NAME = os.environ.get("MODAL_HF_SECRET_NAME", "huggingface")
 
 
 def results_path(name: str) -> Path:

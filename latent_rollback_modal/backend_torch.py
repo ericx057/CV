@@ -36,7 +36,7 @@ class TorchModelWrapper:
         self._layers = _resolve_layers(self._inner)
         self.n_layers = len(self._layers)
         self.d_model = int(_resolve_embed_tokens(self._inner).weight.shape[1])
-        self.device = next(model.parameters()).device
+        self.device = _resolve_input_device(model, self._inner)
 
     def encode(self, prompt: str) -> list[int]:
         return self._tokenizer.encode(prompt, add_special_tokens=False)
@@ -63,20 +63,34 @@ MLXModelWrapper = TorchModelWrapper
 def load_model(model_name: str) -> TorchModelWrapper:
     runtime = select_runtime_device()
     console.print(f"[bold cyan]Loading Torch model:[/bold cyan] {model_name}")
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name,
-        trust_remote_code=True,
-    )
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            trust_remote_code=True,
+        )
+    except Exception as exc:
+        console.print(
+            f"[yellow]Fast tokenizer load failed for {model_name}; "
+            f"retrying with use_fast=False ({type(exc).__name__}: {exc})[/yellow]"
+        )
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            trust_remote_code=True,
+            use_fast=False,
+        )
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        trust_remote_code=True,
-        torch_dtype=runtime.dtype,
-        low_cpu_mem_usage=True,
-    )
-    model.to(runtime.device)
+    load_kwargs = {
+        "trust_remote_code": True,
+        "torch_dtype": runtime.dtype,
+        "low_cpu_mem_usage": True,
+    }
+    if runtime.device == "cuda" and torch.cuda.device_count() > 1:
+        load_kwargs["device_map"] = "auto"
+    model = AutoModelForCausalLM.from_pretrained(model_name, **load_kwargs)
+    if not getattr(model, "hf_device_map", None):
+        model.to(runtime.device)
     model.eval()
     wrapper = TorchModelWrapper(model, tokenizer, model_name)
     console.print(
@@ -113,6 +127,17 @@ def _resolve_embed_tokens(model_inner):
     if hasattr(model_inner, "wte"):
         return model_inner.wte
     raise AttributeError("Unsupported architecture: could not find embedding layer")
+
+
+def _resolve_input_device(model, model_inner) -> torch.device:
+    try:
+        embed = _resolve_embed_tokens(model_inner)
+        weight = getattr(embed, "weight", None)
+        if weight is not None:
+            return weight.device
+    except Exception:
+        pass
+    return next(model.parameters()).device
 
 
 def _tensorize(token_ids: list[int], device: torch.device) -> torch.Tensor:

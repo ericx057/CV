@@ -163,7 +163,7 @@ def load_repobench(
     console.print(f"  [dim]Loading RepoBench-C ({language}, {split}, level={level}) from {dataset_id}[/dim]")
 
     try:
-        ds = load_dataset(dataset_id, split=split, trust_remote_code=True)
+        ds = load_dataset(dataset_id, split=split)
     except Exception as exc:
         raise RuntimeError(f"Failed to load RepoBench: {exc}") from exc
 

@@ -8,6 +8,7 @@ from pathlib import Path
 from .config import (
     DEFAULT_FUNCTION_TIMEOUT_SECONDS,
     DEFAULT_GPU,
+    DEFAULT_HF_SECRET_NAME,
     DEFAULT_STARTUP_TIMEOUT_SECONDS,
     build_env,
 )
@@ -89,9 +90,11 @@ def _modal_objects():
         "/vol/results": modal.Volume.from_name(paths.results_volume_name, create_if_missing=True),
     }
     app = modal.App("ehpc-modal")
+    secrets = [modal.Secret.from_name(DEFAULT_HF_SECRET_NAME)]
     shared_kwargs = {
         "volumes": volumes,
         "gpu": DEFAULT_GPU,
+        "secrets": secrets,
         "timeout": DEFAULT_FUNCTION_TIMEOUT_SECONDS,
         "startup_timeout": DEFAULT_STARTUP_TIMEOUT_SECONDS,
     }

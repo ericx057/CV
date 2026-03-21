@@ -8,6 +8,17 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
+try:
+    from rich import box
+    from rich.console import Console
+    from rich.table import Table
+except Exception:  # pragma: no cover
+    Console = None
+    Table = None
+    box = None
+
+console = Console() if Console is not None else None
+
 
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as f:
@@ -90,6 +101,64 @@ def summarize_result_json(path: Path) -> dict[str, Any]:
     }
 
 
+def summarize_metric_json_rows(path: Path) -> list[dict[str, Any]]:
+    data = load_json(path)
+    if not isinstance(data, list) or not data:
+        return []
+    if not isinstance(data[0], dict):
+        return []
+
+    benchmark = infer_benchmark(path)
+    if benchmark not in {"longbench", "repobench"}:
+        return []
+
+    sample = data[0]
+    method = infer_method(path)
+    if method not in {"LongLLMLingua", "EHPC"}:
+        return []
+    model_key = sample.get("model_key", infer_model_from_name(path.name))
+    condition_key = "ratio_name" if "ratio_name" in sample else "setting_name"
+    rows_by_condition: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in data:
+        condition = str(row.get(condition_key, ""))
+        rows_by_condition[condition].append(row)
+
+    summaries: list[dict[str, Any]] = []
+    for condition, cond_rows in sorted(rows_by_condition.items()):
+        usable_statuses = {"ok", "fallback"}
+        usable = [row for row in cond_rows if row.get("status") in usable_statuses]
+        errors = [row for row in cond_rows if row.get("status") == "error"]
+        task_values = sorted({str(row.get("task", "")) for row in cond_rows if row.get("task", "")})
+
+        summary: dict[str, Any] = {
+            "method": method,
+            "benchmark": benchmark,
+            "path": str(path),
+            "run_id": path.stem,
+            "model_key": model_key,
+            "condition": condition or "-",
+            "tasks": task_values,
+            "n_total": len(cond_rows),
+            "n_ok": sum(1 for row in cond_rows if row.get("status") == "ok"),
+            "n_fallback": sum(1 for row in cond_rows if row.get("status") == "fallback"),
+            "n_error": len(errors),
+            "partial": "_partial" in path.name,
+            "paper_candidate": is_paper_candidate(path),
+        }
+
+        if benchmark == "longbench":
+            summary["exact_match"] = avg_metric(usable, "exact_match")
+            summary["f1"] = avg_metric(usable, "f1")
+        elif benchmark == "repobench":
+            summary["exact_match"] = avg_metric(usable, "exact_match")
+            summary["edit_sim"] = avg_metric(usable, "edit_sim")
+            summary["prefix_match"] = avg_metric(usable, "prefix_match")
+
+        summary["input_token_reduction"] = avg_metric(usable, "input_token_reduction")
+        summaries.append(summary)
+    return summaries
+
+
 def infer_benchmark(path: Path) -> str:
     name = path.as_posix()
     if "longbench" in name:
@@ -101,6 +170,46 @@ def infer_benchmark(path: Path) -> str:
     if "integration_results" in name:
         return "integration"
     return "unknown"
+
+
+def infer_method(path: Path) -> str:
+    name = path.as_posix()
+    if "longllmlingua" in name:
+        return "LongLLMLingua"
+    if "ehpc" in name:
+        return "EHPC"
+    if "repobench_results" in name or "integration_results" in name:
+        return "RSCE/Other"
+    return "Unknown"
+
+
+def infer_model_from_name(name: str) -> str:
+    for key in ("qwen25-7b", "deepseek-14b", "mistral-24b", "llama3-8b"):
+        if key in name:
+            return key
+    return "-"
+
+
+def avg_metric(rows: list[dict[str, Any]], key: str) -> float:
+    if not rows:
+        return 0.0
+    vals = []
+    for row in rows:
+        value = row.get(key)
+        if isinstance(value, bool):
+            vals.append(1.0 if value else 0.0)
+        elif isinstance(value, (int, float)):
+            vals.append(float(value))
+    return (sum(vals) / len(vals)) if vals else 0.0
+
+
+def is_paper_candidate(path: Path) -> bool:
+    name = path.name
+    if "_partial" in name:
+        return False
+    if "smoke" in name or "suite" in name:
+        return False
+    return path.suffix == ".json" and not name.endswith(".manifest.json")
 
 
 def collect_runs(root: Path) -> list[dict[str, Any]]:
@@ -118,6 +227,15 @@ def collect_runs(root: Path) -> list[dict[str, Any]]:
             continue
         summaries.append(summarize_result_json(path))
     return summaries
+
+
+def collect_metric_runs(root: Path) -> list[dict[str, Any]]:
+    runs: list[dict[str, Any]] = []
+    for path in sorted(root.rglob("*.json")):
+        if path.name.endswith(".manifest.json"):
+            continue
+        runs.extend(summarize_metric_json_rows(path))
+    return runs
 
 
 def collect_head_configs(root: Path) -> list[dict[str, Any]]:
@@ -223,6 +341,91 @@ def write_csv(runs: list[dict[str, Any]], output_path: Path) -> None:
             )
 
 
+def print_paper_tables(metric_runs: list[dict[str, Any]], paper_only: bool = True) -> None:
+    rows = [run for run in metric_runs if (run["paper_candidate"] if paper_only else True)]
+    if not rows:
+        return
+
+    longbench_rows = [run for run in rows if run["benchmark"] == "longbench"]
+    repobench_rows = [run for run in rows if run["benchmark"] == "repobench"]
+
+    if longbench_rows:
+        render_table(
+            title="LongBench Paper Summary",
+            rows=sorted(longbench_rows, key=lambda r: (r["method"], r["model_key"], r["condition"])),
+            benchmark="longbench",
+        )
+    if repobench_rows:
+        render_table(
+            title="RepoBench Paper Summary",
+            rows=sorted(repobench_rows, key=lambda r: (r["method"], r["model_key"], r["condition"])),
+            benchmark="repobench",
+        )
+
+
+def render_table(*, title: str, rows: list[dict[str, Any]], benchmark: str) -> None:
+    if console is None or Table is None or box is None:
+        print(f"\n== {title.upper()} ==")
+        for row in rows:
+            metrics = f"EM={row['exact_match']:.1%} TokRed={row['input_token_reduction']:.1%}"
+            if benchmark == "longbench":
+                metrics += f" F1={row['f1']:.3f}"
+            else:
+                metrics += f" EditSim={row['edit_sim']:.3f}"
+            print(
+                f"{row['method']} {row['model_key']} {row['condition']} "
+                f"N={row['n_total']} OK={row['n_ok']} Err={row['n_error']} {metrics}"
+            )
+        return
+
+    table = Table(title=title, box=box.MINIMAL_DOUBLE_HEAD)
+    table.add_column("Method", style="cyan")
+    table.add_column("Model", style="green")
+    table.add_column("Cond", style="magenta")
+    table.add_column("N", justify="right")
+    table.add_column("OK", justify="right")
+    table.add_column("Err", justify="right")
+    if benchmark == "longbench":
+        table.add_column("EM", justify="right")
+        table.add_column("F1", justify="right")
+    else:
+        table.add_column("EM%", justify="right")
+        table.add_column("EditSim", justify="right")
+    table.add_column("TokRed", justify="right")
+
+    for row in rows:
+        cond = row["condition"] or "-"
+        tok_red = f"{row['input_token_reduction']:.1%}"
+        em = f"{row['exact_match']:.1%}"
+        if benchmark == "longbench":
+            metric = f"{row['f1']:.3f}"
+            table.add_row(
+                row["method"],
+                row["model_key"],
+                cond,
+                str(row["n_total"]),
+                str(row["n_ok"] + row["n_fallback"]),
+                str(row["n_error"]),
+                em,
+                metric,
+                tok_red,
+            )
+        else:
+            metric = f"{row['edit_sim']:.3f}"
+            table.add_row(
+                row["method"],
+                row["model_key"],
+                cond,
+                str(row["n_total"]),
+                str(row["n_ok"] + row["n_fallback"]),
+                str(row["n_error"]),
+                em,
+                metric,
+                tok_red,
+            )
+    console.print(table)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Summarize Modal benchmark result trees.")
     parser.add_argument(
@@ -236,6 +439,16 @@ def main() -> int:
         default="modal_results_full_20260319/results_summary.csv",
         help="Optional CSV output path",
     )
+    parser.add_argument(
+        "--no-paper-tables",
+        action="store_true",
+        help="Disable compact paper-oriented metric tables",
+    )
+    parser.add_argument(
+        "--include-smoke",
+        action="store_true",
+        help="Include smoke and partial runs in the paper-oriented metric tables",
+    )
     args = parser.parse_args()
 
     root = Path(args.root)
@@ -243,10 +456,13 @@ def main() -> int:
         raise SystemExit(f"Results root not found: {root}")
 
     runs = collect_runs(root)
+    metric_runs = collect_metric_runs(root)
     configs = collect_head_configs(root)
 
     print(f"Scanned: {root}")
     print(f"Found {len(runs)} run summaries")
+    if not args.no_paper_tables:
+        print_paper_tables(metric_runs, paper_only=not args.include_smoke)
     print_runs(runs)
     print_missing_finals(runs)
     print_head_configs(configs)

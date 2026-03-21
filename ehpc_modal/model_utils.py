@@ -28,10 +28,17 @@ class AttentionCaptureComplete(RuntimeError):
 
 def load_bundle(model_key: str, model_name: str, eager_attention: bool = True) -> EHPCBundle:
     runtime = select_runtime_device()
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name,
-        trust_remote_code=True,
-    )
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            trust_remote_code=True,
+        )
+    except Exception:
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            trust_remote_code=True,
+            use_fast=False,
+        )
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -42,17 +49,22 @@ def load_bundle(model_key: str, model_name: str, eager_attention: bool = True) -
     }
     if eager_attention:
         kwargs["attn_implementation"] = "eager"
+    if runtime.device == "cuda" and torch.cuda.device_count() > 1:
+        kwargs["device_map"] = "auto"
 
     model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
-    model.to(runtime.device)
+    if not getattr(model, "hf_device_map", None):
+        model.to(runtime.device)
     model.eval()
+    model_inner = _resolve_model_inner(model)
+    input_device = _resolve_input_device(model, model_inner)
 
     return EHPCBundle(
         model_key=model_key,
         model_name=model_name,
         tokenizer=tokenizer,
         model=model,
-        device=runtime.device,
+        device=str(input_device),
         dtype=runtime.dtype,
         n_layers=int(model.config.num_hidden_layers),
         n_heads=int(model.config.num_attention_heads),
@@ -63,6 +75,33 @@ def clear_bundle(bundle: EHPCBundle) -> None:
     del bundle.model
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+
+
+def _resolve_model_inner(model):
+    if hasattr(model, "model"):
+        return model.model
+    if hasattr(model, "transformer"):
+        return model.transformer
+    return model
+
+
+def _resolve_embed_tokens(model_inner):
+    if hasattr(model_inner, "embed_tokens"):
+        return model_inner.embed_tokens
+    if hasattr(model_inner, "wte"):
+        return model_inner.wte
+    raise AttributeError("Unsupported architecture: could not find embedding layer")
+
+
+def _resolve_input_device(model, model_inner) -> torch.device:
+    try:
+        embed = _resolve_embed_tokens(model_inner)
+        weight = getattr(embed, "weight", None)
+        if weight is not None:
+            return weight.device
+    except Exception:
+        pass
+    return next(model.parameters()).device
 
 
 def get_decoder_layers(model) -> list[object]:

@@ -8,6 +8,7 @@ from pathlib import Path
 from .config import (
     DEFAULT_FUNCTION_TIMEOUT_SECONDS,
     DEFAULT_GPU,
+    DEFAULT_HF_SECRET_NAME,
     DEFAULT_STARTUP_TIMEOUT_SECONDS,
     build_env,
 )
@@ -92,9 +93,11 @@ def _modal_objects():
         ),
     }
     app = modal.App("longllmlingua-modal")
+    secrets = [modal.Secret.from_name(DEFAULT_HF_SECRET_NAME)]
     shared_kwargs = {
         "volumes": volumes,
         "gpu": DEFAULT_GPU,
+        "secrets": secrets,
         "timeout": DEFAULT_FUNCTION_TIMEOUT_SECONDS,
         "startup_timeout": DEFAULT_STARTUP_TIMEOUT_SECONDS,
     }
@@ -103,8 +106,16 @@ def _modal_objects():
             "image": build_image("requirements_longbench.txt"),
             **shared_kwargs,
         },
+        "longbench_llama31": {
+            "image": build_image("requirements_longbench_llama31.txt"),
+            **shared_kwargs,
+        },
         "repobench": {
             "image": build_image("requirements_repobench.txt"),
+            **shared_kwargs,
+        },
+        "repobench_llama31": {
+            "image": build_image("requirements_repobench_llama31.txt"),
             **shared_kwargs,
         },
     }
@@ -130,10 +141,20 @@ if app is not None:
     def run_longbench(args: list[str] | None = None):
         return _run_benchmark_payload("longbench", args)
 
+    @app.function(**_APP_KWARGS["longbench_llama31"])
+    def run_longbench_llama31(args: list[str] | None = None):
+        return _run_benchmark_payload("longbench", args)
+
     @app.function(**_APP_KWARGS["repobench"])
     def run_repobench(args: list[str] | None = None):
         return _run_benchmark_payload("repobench", args)
+
+    @app.function(**_APP_KWARGS["repobench_llama31"])
+    def run_repobench_llama31(args: list[str] | None = None):
+        return _run_benchmark_payload("repobench", args)
 else:
     run_longbench = None
+    run_longbench_llama31 = None
     run_repobench = None
+    run_repobench_llama31 = None
     run_suite = None

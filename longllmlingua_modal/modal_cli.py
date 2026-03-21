@@ -69,6 +69,14 @@ def launch_remote(remote_fn, args: list[str], detach: bool, results_root: Path |
             return int(payload.get("exit_code", 0))
 
 
+def wants_modern_transformers_image(benchmark: str, extra_args: list[str]) -> bool:
+    if benchmark not in {"longbench", "repobench"}:
+        return False
+    return any(
+        arg in {"llama3.1-8b", "llama3.1-70b", "mistral-24b"} for arg in extra_args
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Modal-first CLI for LongLLMLingua baselines")
     parser.add_argument("--detach", action="store_true")
@@ -82,7 +90,13 @@ def main() -> int:
             "different Modal images. Launch `longbench` and `repobench` separately."
         )
 
-    remote_fn = getattr(modal_app, f"run_{args.benchmark}", None)
+    remote_name = f"run_{args.benchmark}"
+    if wants_modern_transformers_image(args.benchmark, args.args):
+        candidate = f"{remote_name}_llama31"
+        if hasattr(modal_app, candidate):
+            remote_name = candidate
+
+    remote_fn = getattr(modal_app, remote_name, None)
     if remote_fn is not None and hasattr(remote_fn, "remote"):
         return launch_remote(remote_fn, args.args, detach=args.detach, app=modal_app.app)
     if args.detach:
